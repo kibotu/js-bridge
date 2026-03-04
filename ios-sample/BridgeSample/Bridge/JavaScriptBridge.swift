@@ -19,9 +19,6 @@ class JavaScriptBridge: NSObject, WKScriptMessageHandler {
 
     private let schemaVersion: Int = 1
 
-    /// Controls whether lifecycle events are sent to JavaScript.
-    var lifecycleEventsEnabled = false
-
     private var callbackResponse: String { "__\(name)_handleResponse" }
     private var callbackMessage: String { "__\(name)_handleNativeMessage" }
 
@@ -60,8 +57,8 @@ class JavaScriptBridge: NSObject, WKScriptMessageHandler {
         register(handler: ShowAlertHandler(viewController: viewController))
 
         // Navigation
-        register(handler: TopNavigationHandler())
-        register(handler: BottomNavigationHandler())
+        register(handler: TopNavigationHandler(bridge: self))
+        register(handler: BottomNavigationHandler(bridge: self))
         register(handler: NavigationHandler(viewController: viewController, webView: webView))
         register(handler: OpenUrlHandler())
 
@@ -80,8 +77,7 @@ class JavaScriptBridge: NSObject, WKScriptMessageHandler {
         register(handler: TrackEventHandler())
         register(handler: TrackScreenHandler())
 
-        // Lifecycle & Refresh
-        register(handler: LifecycleEventsHandler(bridge: self))
+        // Refresh
         register(handler: RefreshHandler())
     }
 
@@ -279,7 +275,6 @@ class JavaScriptBridge: NSObject, WKScriptMessageHandler {
     // MARK: - Lifecycle Events
 
     func notifyLifecycleEvent(_ event: String) {
-        guard lifecycleEventsEnabled else { return }
         sendToWeb(action: "lifecycle", content: ["event": event])
     }
 }

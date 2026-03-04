@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.lifecycleScope
 import net.kibotu.bridgesample.bridge.JavaScriptBridge
+import net.kibotu.bridgesample.bridge.SafeAreaService
 import net.kibotu.bridgesample.bridge.commands.refresh.RefreshService
 import net.kibotu.bridgesample.bridge.commands.systembars.isLightNavigationBar
 import net.kibotu.bridgesample.bridge.commands.systembars.isLightStatusBar
@@ -66,6 +67,9 @@ class MainActivity : ComponentActivity() {
         super.onWindowFocusChanged(hasFocus)
         val event = if (hasFocus) "focused" else "defocused"
         currentBridge?.sendToWeb("lifecycle", mapOf("event" to event))
+        if (hasFocus) {
+            SafeAreaService.pushTobridge(currentBridge)
+        }
     }
 }
 

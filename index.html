@@ -461,18 +461,16 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
 <!-- Lifecycle -->
 <div class="section">
     <h2>Lifecycle Events</h2>
-    <div class="button-group">
-        <button onclick="enableLifecycle()">Enable</button>
-        <button onclick="disableLifecycle()">Disable</button>
-    </div>
+    <p style="color:#666;font-size:14px;">Native sends <code>focused</code> / <code>defocused</code> events automatically. Current state:</p>
+    <div id="lifecycleStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:#e8f5e9;color:#2e7d32;font-weight:600;font-size:15px;display:inline-block;">focused</div>
 </div>
 
 <!-- Refresh / Push -->
 <div class="section">
     <h2>Refresh / Push Events</h2>
-    <div class="button-group">
-        <button onclick="startListeningRefresh()">Start Listening</button>
-        <button onclick="stopListeningRefresh()">Stop Listening</button>
+    <p style="color:#666;font-size:14px;">Native sends push events automatically. Latest:</p>
+    <div id="pushStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:#e3f2fd;color:#1565c0;font-weight:600;font-size:15px;display:inline-block;">waiting...</div>
+    <div class="button-group" style="margin-top:12px;">
         <button onclick="triggerRefresh()">Trigger Refresh</button>
     </div>
 </div>
@@ -582,20 +580,28 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
     }
 
     // -- native messages -------------------------------------------------
-    var isListeningToRefresh = false;
-
     function handleNativeMessage(message) {
         var data = message.data || {};
         var action = data.action;
         var content = data.content;
 
         if (action === 'onPushNotification') {
-            if (isListeningToRefresh) log('Push: ' + (content && content.message || 'no message'), 'success');
+            var msg = (content && content.message) || 'no message';
+            log('Push: ' + msg, 'success');
+            var el = document.getElementById('pushStatus');
+            if (el) { el.textContent = msg; el.style.background = '#e8f5e9'; el.style.color = '#2e7d32'; }
             return;
         }
 
         if (action === 'lifecycle') {
-            log('Lifecycle: ' + (content && content.event || '?'), 'info');
+            var event = (content && content.event) || 'unknown';
+            log('Lifecycle: ' + event, 'info');
+            var el = document.getElementById('lifecycleStatus');
+            if (el) {
+                el.textContent = event;
+                el.style.background = event === 'focused' ? '#e8f5e9' : '#fce4ec';
+                el.style.color = event === 'focused' ? '#2e7d32' : '#c62828';
+            }
             return;
         }
 
@@ -794,21 +800,7 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
-    // -- lifecycle
-    async function enableLifecycle() {
-        try { await call('lifecycleEvents', { enable: true }); log('Lifecycle events enabled', 'success'); }
-        catch (e) { log('Error: ' + e.message, 'error'); }
-    }
-
-    async function disableLifecycle() {
-        try { await call('lifecycleEvents', { enable: false }); log('Lifecycle events disabled', 'success'); }
-        catch (e) { log('Error: ' + e.message, 'error'); }
-    }
-
-    // -- refresh / push
-    function startListeningRefresh() { isListeningToRefresh = true; log('Listening for push events', 'success'); }
-    function stopListeningRefresh() { isListeningToRefresh = false; log('Stopped listening', 'warning'); }
-
+    // -- refresh
     async function triggerRefresh() {
         try { await call('refresh', { command: 'refresh' }); log('Refresh sent', 'success'); }
         catch (e) { log('Error: ' + e.message, 'error'); }

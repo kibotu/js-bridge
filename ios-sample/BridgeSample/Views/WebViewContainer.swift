@@ -77,34 +77,22 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         updateContentInsets()
     }
     
-    /// Update webview content insets based on safe area requirements
     func updateContentInsets() {
         let safeInsets = view.safeAreaInsets
-        
+
         let topInset: CGFloat = shouldRespectTopSafeArea ? safeInsets.top : 0
         let bottomInset: CGFloat = shouldRespectBottomSafeArea ? safeInsets.bottom : 0
-        
+
         webView.scrollView.contentInset = UIEdgeInsets(
             top: topInset,
             left: 0,
             bottom: bottomInset,
             right: 0
         )
-        
         webView.scrollView.scrollIndicatorInsets = webView.scrollView.contentInset
-        
-        // Push safe area values as CSS custom properties
-        bridge?.updateSafeAreaCSS(
-            insetTop: safeInsets.top,
-            insetBottom: safeInsets.bottom,
-            insetLeft: safeInsets.left,
-            insetRight: safeInsets.right,
-            statusBarHeight: safeInsets.top,
-            topNavHeight: 0,
-            bottomNavHeight: 0,
-            systemNavHeight: safeInsets.bottom
-        )
-        
+
+        SafeAreaService.shared.pushToBridge(bridge)
+
         Orchard.v("[WebViewController] Updated content insets - top: \(topInset), bottom: \(bottomInset)")
     }
     
@@ -126,6 +114,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     func onWindowFocusChanged(hasFocus: Bool) {
         if hasFocus {
             bridge?.sendToWeb(action: "lifecycle", content: ["event": "focused"])
+            SafeAreaService.shared.pushToBridge(bridge)
         } else {
             bridge?.sendToWeb(action: "lifecycle", content: ["event": "defocused"])
         }

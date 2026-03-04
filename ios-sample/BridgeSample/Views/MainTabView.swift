@@ -99,6 +99,7 @@ struct MainTabView: View {
         .statusBar(hidden: systemUIState.isStatusBarHidden)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             currentBridge?.notifyLifecycleEvent("focused")
+            SafeAreaService.shared.pushToBridge(currentBridge)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
             currentBridge?.notifyLifecycleEvent("defocused")

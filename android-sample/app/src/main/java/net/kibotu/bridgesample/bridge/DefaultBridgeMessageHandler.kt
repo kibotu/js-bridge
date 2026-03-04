@@ -43,50 +43,28 @@ import timber.log.Timber
  * Returns error responses instead of throwing exceptions, allowing web to handle failures
  * gracefully without breaking the bridge connection.
  */
-class DefaultBridgeMessageHandler : BridgeMessageHandler {
+class DefaultBridgeMessageHandler(
+    private val getBridge: () -> JavaScriptBridge? = { null }
+) : BridgeMessageHandler {
 
-    /**
-     * Registry of all available bridge commands, organized by domain.
-     *
-     * **Why organized by domain:**
-     * Grouped logically to help developers quickly find related commands when debugging
-     * or adding new functionality. Each domain represents a coherent capability area.
-     *
-     * **Why instantiated here:**
-     * Commands are stateless and can be reused. Instantiating them once avoids
-     * unnecessary object creation on every message.
-     */
     private val commands = listOf(
-        // Device & System
         DeviceInfoCommand(),
         CheckNetworkStatusCommand(),
         SystemBarsCommand(),
         GetInsetsCommand(),
         HapticCommand(),
-
-        // Permissions & Settings - required for Android's runtime permission model
         RequestPermissionsCommand(),
         OpenSettingsCommand(),
-
-        // Clipboard - sharing data between web and system clipboard
         CopyToClipboardCommand(),
-
-        // Navigation - deep linking and screen transitions
         OpenUrlCommand(),
         NavigationCommand(),
-        TopNavigationCommand(),
-        BottomNavigationCommand(),
-
-        // UI - native UI elements for better UX than web alternatives
+        TopNavigationCommand(getBridge),
+        BottomNavigationCommand(getBridge),
         ShowToastCommand(),
         ShowAlertCommand(),
-
-        // Secure Storage - encrypted storage for sensitive data (tokens, credentials)
         SaveSecureDataCommand(),
         LoadSecureDataCommand(),
         RemoveSecureDataCommand(),
-
-        // Refresh - pull-to-refresh and data synchronization
         RefreshCommand()
     )
 

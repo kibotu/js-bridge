@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import net.kibotu.bridgesample.bridge.decorators.BridgeWebViewClient
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -35,6 +36,44 @@ class JavaScriptBridge(
     companion object {
         const val DEFAULT_BRIDGE_NAME = "jsbridge"
         const val SCHEMA_VERSION = 1
+
+        /**
+         * Extension to retrieve the bridge from a WebView's tag.
+         */
+        @Suppress("unused")
+        val WebView.bridge: JavaScriptBridge?
+            get() = tag as? JavaScriptBridge
+
+        /**
+         * One-liner to set up the JavaScript bridge on a [WebView].
+         *
+         * - Creates the bridge and registers the `@JavascriptInterface`
+         * - Wraps the existing [android.webkit.WebViewClient] with [BridgeWebViewClient]
+         *   (decorator pattern) so bridge injection and safe area CSS happen automatically
+         * - Stores the bridge in [WebView.tag] for retrieval
+         *
+         * ```kotlin
+         * // In a Fragment / Compose factory — that's it:
+         * val bridge = JavaScriptBridge.inject(webView, DefaultBridgeMessageHandler())
+         * ```
+         *
+         * @return The created [JavaScriptBridge] instance.
+         */
+        fun inject(
+            webView: WebView,
+            messageHandler: BridgeMessageHandler,
+            bridgeName: String = DEFAULT_BRIDGE_NAME
+        ): JavaScriptBridge {
+            val bridge = JavaScriptBridge(webView, messageHandler, bridgeName)
+            webView.addJavascriptInterface(bridge, bridgeName)
+            webView.tag = bridge
+
+            val currentClient = webView.webViewClient
+            webView.webViewClient = BridgeWebViewClient(currentClient)
+
+            Timber.d("[Bridge] Injected (name=$bridgeName)")
+            return bridge
+        }
     }
 
     /**

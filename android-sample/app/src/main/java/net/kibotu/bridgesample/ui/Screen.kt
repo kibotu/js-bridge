@@ -1,7 +1,10 @@
 package net.kibotu.bridgesample.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
@@ -36,11 +39,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.kibotu.bridgesample.WebViewScreen
 import net.kibotu.bridgesample.bridge.JavaScriptBridge
+import net.kibotu.bridgesample.bridge.SafeAreaService
 import net.kibotu.bridgesample.bridge.commands.bottomnavigation.BottomNavigationService
 import net.kibotu.bridgesample.bridge.commands.topnavigation.TopNavigationConfig
 import net.kibotu.bridgesample.bridge.commands.topnavigation.TopNavigationService
@@ -55,6 +61,8 @@ fun Screen(
     val navController = rememberNavController()
     val topNavConfig by TopNavigationService.config.collectAsState(TopNavigationConfig())
     val isBottomBarVisible by BottomNavigationService.isVisible.collectAsState(true)
+
+    val density = LocalDensity.current
 
     LaunchedEffect(selectedTabIndex) {
         when (selectedTabIndex) {
@@ -77,40 +85,48 @@ fun Screen(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets(0),
             topBar = {
-                Column(modifier = Modifier.animateContentSize()) {
-                    if (topNavConfig.isVisible) {
-                        Column(modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)) {
-                            TopAppBar(
-                                title = {
-                                    val titleText = if (topNavConfig.showLogo) {
-                                        "CHECK24"
-                                    } else {
-                                        topNavConfig.title ?: "Check-Mate Bridge Sample"
-                                    }
-                                    Text(text = titleText)
-                                },
-                                navigationIcon = {
-                                    if (topNavConfig.showUpArrow) {
-                                        IconButton(onClick = { onBackPressed() }) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = "Back"
-                                            )
-                                        }
-                                    }
-                                },
-                                actions = {
-                                    if (topNavConfig.showProfileIconWidget) {
+                AnimatedVisibility(
+                    visible = topNavConfig.isVisible,
+                    enter = slideInVertically(initialOffsetY = { -it }) + expandVertically() + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { -it }) + shrinkVertically() + fadeOut()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .windowInsetsPadding(WindowInsets.statusBars)
+                            .onGloballyPositioned {
+                                SafeAreaService.topBarHeightDp = pxToDp(it.size.height, density.density)
+                            }
+                    ) {
+                        TopAppBar(
+                            title = {
+                                val titleText = if (topNavConfig.showLogo) {
+                                    "My Title"
+                                } else {
+                                    topNavConfig.title ?: "Bridge Sample"
+                                }
+                                Text(text = titleText)
+                            },
+                            navigationIcon = {
+                                if (topNavConfig.showUpArrow) {
+                                    IconButton(onClick = { onBackPressed() }) {
                                         Icon(
-                                            imageVector = Icons.Filled.Person,
-                                            contentDescription = "Profile"
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back"
                                         )
                                     }
                                 }
-                            )
-                            if (topNavConfig.showDivider) {
-                                HorizontalDivider()
+                            },
+                            actions = {
+                                if (topNavConfig.showProfileIconWidget) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Person,
+                                        contentDescription = "Profile"
+                                    )
+                                }
                             }
+                        )
+                        if (topNavConfig.showDivider) {
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -123,17 +139,18 @@ fun Screen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .animateContentSize()
             ) {
                 composable("tab1") {
                     WebViewScreen(
                         url = "file:///android_asset/index.html",
-                        onBridgeReady = { onBridgeReady(it) })
+                        onBridgeReady = { onBridgeReady(it) }
+                    )
                 }
                 composable("tab2") {
                     WebViewScreen(
-                        url = "https://trail.services.kibotu.net",
-                        onBridgeReady = { onBridgeReady(it) })
+                        url = "https://kibotu.net/check24/jenkins/safearea/",
+                        onBridgeReady = { onBridgeReady(it) }
+                    )
                 }
             }
         }
@@ -149,6 +166,9 @@ fun Screen(
                     exit = slideOutVertically(targetOffsetY = { it })
                 ) {
                     NavigationBar(
+                        modifier = Modifier.onGloballyPositioned {
+                            SafeAreaService.bottomBarHeightDp = pxToDp(it.size.height, density.density)
+                        },
                         containerColor = Color.White,
                         windowInsets = WindowInsets(0)
                     ) {
@@ -180,3 +200,5 @@ fun Screen(
         }
     }
 }
+
+private fun pxToDp(px: Int, density: Float): Int = (px / density).toInt()
