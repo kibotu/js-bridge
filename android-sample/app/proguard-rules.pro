@@ -10,6 +10,6 @@
 -keepattributes JavascriptInterface
 -keepattributes *Annotation*
 
--dontwarn com.check24.bridgesample.**
--keep class com.check24.bridgesample.** { *; }
+-dontwarn net.kibotu.bridgesample.**
+-keep class net.kibotu.bridgesample.** { *; }
 
