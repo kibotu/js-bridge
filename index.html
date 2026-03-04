@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>JavaScript Bridge Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material-darker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/neat.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/css/css.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -22,6 +28,64 @@
             --bridge-system-nav: 0px;
         }
 
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent: #0563c1;
+            --accent-hover: #044a94;
+            --accent-soft: rgba(37, 99, 235, 0.1);
+            --border: rgba(0, 0, 0, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --console-bg: #f1f5f9;
+            --console-border: #e2e8f0;
+            --console-text: #1e293b;
+            --console-timestamp: #64748b;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-strong: #1e40af;
+            --info-text: #2563eb;
+            --warn-bg: #fef3c7;
+            --warn-border: #fbbf24;
+            --warn-text: #92400e;
+            --badge-bg: #eff6ff;
+            --badge-text: #1e40af;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #0563c1;
+            --accent-hover: #044a94;
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --console-bg: #0f172a;
+            --console-border: #1e293b;
+            --console-text: #10b981;
+            --console-timestamp: #6b7280;
+            --info-bg: rgba(59, 130, 246, 0.1);
+            --info-border: rgba(59, 130, 246, 0.25);
+            --info-strong: #60a5fa;
+            --info-text: #93c5fd;
+            --warn-bg: rgba(245, 158, 11, 0.1);
+            --warn-border: rgba(245, 158, 11, 0.3);
+            --warn-text: #fbbf24;
+            --badge-bg: rgba(59, 130, 246, 0.15);
+            --badge-text: #93c5fd;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             padding: 16px;
@@ -29,56 +93,81 @@
             padding-bottom: calc(16px + var(--bridge-inset-bottom));
             padding-left: calc(16px + var(--bridge-inset-left));
             padding-right: calc(16px + var(--bridge-inset-right));
-            background: #f5f5f5;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
             max-width: 800px;
             margin: 0 auto;
+            transition: background 0.2s, color 0.2s;
         }
 
         .desktop-banner {
             display: none;
-            background: #fef3c7;
-            border: 2px solid #fbbf24;
+            background: var(--warn-bg);
+            border: 2px solid var(--warn-border);
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 16px;
             font-size: 13px;
-            color: #92400e;
+            color: var(--warn-text);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, #044a94 100%);
             color: white;
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .header h1 { font-size: 24px; margin-bottom: 8px; }
-        .header p { font-size: 14px; opacity: 0.9; }
+        .header h1 { font-size: 24px; margin-bottom: 4px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.15s;
+            box-shadow: none;
+            padding: 0;
+        }
+        .theme-toggle:active { background: rgba(255, 255, 255, 0.35); transform: none; }
 
         .status {
-            background: white;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
         }
 
         .status-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #9ca3af;
+            background: var(--text-muted);
             animation: pulse 2s infinite;
         }
 
-        .status-dot.ready { background: #10b981; }
-        .status-dot.error { background: #ef4444; }
+        .status-dot.ready { background: var(--success); }
+        .status-dot.error { background: var(--error); }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -86,19 +175,19 @@
         }
 
         .section {
-            background: white;
+            background: var(--bg-secondary);
             padding: 16px;
             border-radius: 12px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
         }
 
         .section h2 {
-            color: #1f2937;
+            color: var(--text-primary);
             font-size: 18px;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid var(--border);
         }
 
         .button-group {
@@ -109,7 +198,7 @@
         }
 
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--accent);
             color: white;
             border: none;
             padding: 12px 16px;
@@ -117,24 +206,17 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+            transition: background 0.15s, transform 0.1s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
         }
 
-        button:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(102, 126, 234, 0.3);
-        }
-
-        button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        button:hover { background: var(--accent-hover); }
+        button:active { transform: translateY(1px); }
+        button:disabled { background: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
         .console {
-            background: #1f2937;
-            color: #10b981;
+            background: var(--console-bg);
+            color: var(--console-text);
             padding: 16px;
             border-radius: 8px;
             font-family: 'Courier New', Courier, monospace;
@@ -142,46 +224,49 @@
             max-height: 300px;
             overflow-y: auto;
             line-height: 1.5;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid var(--console-border);
         }
 
         .console-entry {
             margin-bottom: 8px;
             padding: 4px 0;
-            border-bottom: 1px solid #374151;
+            border-bottom: 1px solid var(--console-border);
         }
 
         .console-entry:last-child { border-bottom: none; }
-        .timestamp { color: #6b7280; margin-right: 8px; }
-        .success { color: #10b981; }
-        .error { color: #ef4444; }
-        .info { color: #3b82f6; }
-        .warning { color: #f59e0b; }
+        .timestamp { color: var(--console-timestamp); margin-right: 8px; }
+        .success { color: var(--success); }
+        .error { color: var(--error); }
+        .info { color: var(--accent); }
+        .warning { color: var(--warning); }
 
         .clear-console {
-            background: #374151;
-            color: #9ca3af;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
             padding: 8px 16px;
             margin-top: 8px;
             font-size: 12px;
+            box-shadow: none;
         }
+        .clear-console:hover { background: var(--bg-tertiary); }
 
         .test-section {
-            background: #fef3c7;
-            border: 2px solid #fbbf24;
+            background: var(--warn-bg);
+            border: 2px solid var(--warn-border);
             padding: 12px;
             border-radius: 8px;
             margin-top: 12px;
         }
 
         .test-section h3 {
-            color: #92400e;
+            color: var(--warn-text);
             font-size: 14px;
             margin-bottom: 8px;
         }
 
         pre {
-            background: #f3f4f6;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
             padding: 12px;
             border-radius: 6px;
             overflow-x: auto;
@@ -189,9 +274,23 @@
             margin-top: 8px;
         }
 
+        .cm-wrapper {
+            margin-top: 8px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .cm-wrapper .CodeMirror {
+            height: auto;
+            font-size: 12px;
+            line-height: 1.5;
+            background: var(--bg-tertiary);
+        }
+
         .device-info {
-            background: #f0fdf4;
-            border: 1px solid #86efac;
+            background: var(--info-bg);
+            border: 1px solid var(--info-border);
             padding: 12px;
             border-radius: 8px;
             margin-top: 12px;
@@ -204,12 +303,12 @@
             font-size: 13px;
         }
 
-        .device-info-item strong { color: #166534; }
-        .device-info-item span { color: #15803d; }
+        .device-info-item strong { color: var(--info-strong); }
+        .device-info-item span { color: var(--info-text); }
 
         code.badge {
-            background: #eef2ff;
-            color: #3730a3;
+            background: var(--badge-bg);
+            color: var(--badge-text);
             padding: 2px 8px;
             border-radius: 9999px;
             font-size: 12px;
@@ -221,7 +320,7 @@
             list-style: none;
             cursor: pointer;
             font-weight: 600;
-            color: #1f2937;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -231,12 +330,12 @@
         .collapsible summary:after {
             content: '\25B8';
             margin-left: auto;
-            color: #9ca3af;
+            color: var(--text-muted);
             transition: transform 0.15s ease-in-out;
         }
         .collapsible[open] summary:after { transform: rotate(90deg); }
         .collapsible-content {
-            border-top: 2px solid #e5e7eb;
+            border-top: 2px solid var(--border);
             margin-top: 8px;
             padding-top: 12px;
         }
@@ -244,6 +343,7 @@
             list-style: disc;
             margin: 8px 0 8px 16px;
             padding-left: 16px;
+            color: var(--text-secondary);
         }
         .doc-list li { margin: 6px 0; }
 
@@ -254,14 +354,14 @@
             margin-top: 12px;
         }
         .inset-card {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
+            background: var(--info-bg);
+            border: 1px solid var(--info-border);
             border-radius: 8px;
             padding: 8px 12px;
             font-size: 12px;
         }
-        .inset-card strong { color: #0369a1; }
-        .inset-card span { color: #0284c7; font-family: monospace; }
+        .inset-card strong { color: var(--info-strong); }
+        .inset-card span { color: var(--info-text); font-family: monospace; }
 
         @media (min-width: 600px) {
             .button-group {
@@ -280,8 +380,11 @@
 </div>
 
 <div class="header">
-    <h1>JavaScript Bridge Demo</h1>
-    <p>Unified Web ↔ Native Communication (Android &amp; iOS)</p>
+    <div>
+        <h1>JavaScript Bridge Demo</h1>
+        <p>Unified Web ↔ Native Communication (Android &amp; iOS)</p>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeToggle">🌙</button>
 </div>
 
 <div class="status" id="bridgeStatus">
@@ -300,8 +403,8 @@
                 <div class="device-info-item"><strong>Platform:</strong> <span id="specPlatform">--</span></div>
             </div>
 
-            <h3 style="margin-top:12px; font-size:14px; color:#1f2937;">Quick start</h3>
-            <pre><code>await jsbridge.ready();
+            <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">Quick start</h3>
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.ready();
 jsbridge.setDebug(true);
 
 jsbridge.on((msg) => {
@@ -309,9 +412,9 @@ jsbridge.on((msg) => {
   console.log(action, content);
 });
 
-const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</code></pre>
+const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</textarea></div>
 
-            <h3 style="margin-top:12px; font-size:14px; color:#1f2937;">API</h3>
+            <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">API</h3>
             <ul class="doc-list">
                 <li><strong>jsbridge.ready(): Promise&lt;void&gt;</strong></li>
                 <li><strong>jsbridge.call(msg, opts?): Promise&lt;any&gt;</strong></li>
@@ -322,12 +425,12 @@ const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</code></pr
                 <li><strong>jsbridge.schemaVersion</strong> — integer</li>
             </ul>
 
-            <h3 style="margin-top:12px; font-size:14px; color:#1f2937;">Message format</h3>
-            <pre><code>{
+            <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">Message format</h3>
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">{
   version: jsbridge.schemaVersion,
   id: "msg_...",
   data: { action: "...", content: { ... } }
-}</code></pre>
+}</textarea></div>
         </div>
     </details>
 </div>
@@ -350,6 +453,21 @@ const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</code></pr
         <button onclick="openSettings()">Open Settings</button>
     </div>
     <div id="deviceInfo" class="device-info" style="display: none;"></div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Device info
+const info = await jsbridge.call({ data: { action: 'deviceInfo' } });
+// → { platform, osVersion, model, appVersion }
+
+// Network status
+const net = await jsbridge.call({ data: { action: 'networkState' } });
+// → { connected: true, type: 'wifi' }
+
+// Open native settings
+await jsbridge.call({ data: { action: 'openSettings' } });</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Safe Area / Insets -->
@@ -366,7 +484,7 @@ const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</code></pr
     </div>
     <div class="test-section">
         <h3>CSS Custom Properties</h3>
-        <p style="font-size: 13px; color: #78350f; margin-top: 4px;">
+        <p style="font-size: 13px; color: var(--warn-text); margin-top: 4px;">
             Native automatically pushes <code>--bridge-inset-*</code> CSS properties whenever bars change.
             Use <code>var(--bridge-inset-top)</code> etc. in your CSS. The <code>getInsets</code> action
             is for on-demand JavaScript queries.
@@ -375,15 +493,14 @@ const info = await jsbridge.call({ data: { action: 'deviceInfo' } });</code></pr
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
-            <pre><code>/* CSS: automatically updated by native */
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="css">/* CSS: automatically updated by native */
 body {
   padding-top: var(--bridge-inset-top, env(safe-area-inset-top, 0px));
   padding-bottom: var(--bridge-inset-bottom, env(safe-area-inset-bottom, 0px));
-}
-
-/* JS: query on demand */
+}</textarea></div>
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">/* JS: query on demand */
 const insets = await jsbridge.call({ data: { action: 'getInsets' } });
-// { statusBar: { height, visible }, systemNavigation: { ... }, safeArea: { top, right, bottom, left } }</code></pre>
+// { statusBar: { height, visible }, systemNavigation: { ... }, safeArea: { top, right, bottom, left } }</textarea></div>
         </div>
     </details>
 </div>
@@ -395,6 +512,24 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="showToast()">Show Toast</button>
         <button onclick="showAlert()">Show Alert</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Toast
+await jsbridge.call({ data: { action: 'showToast', content: {
+  message: 'Hello!',
+  duration: 'short' // 'short' | 'long'
+}}});
+
+// Alert with buttons
+const result = await jsbridge.call({ data: { action: 'showAlert', content: {
+  title: 'Confirm',
+  message: 'Are you sure?',
+  buttons: ['OK', 'Cancel']
+}}});
+// → { buttonIndex: 0 }</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Top Navigation -->
@@ -408,6 +543,24 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="toggleLogo()">Toggle Logo</button>
         <button onclick="toggleProfile()">Toggle Profile</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call({ data: { action: 'topNavigation', content: {
+  isVisible: true,
+  title: 'Page Title',
+  showUpArrow: false,
+  showDivider: true,
+  showLogo: false,
+  showProfileIconWidget: false
+}}});
+
+// Hide toolbar
+await jsbridge.call({ data: { action: 'topNavigation', content: {
+  isVisible: false
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Bottom Navigation -->
@@ -418,6 +571,20 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="showBottomNav()">Show</button>
         <button onclick="hideBottomNav()">Hide</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Show tab bar
+await jsbridge.call({ data: { action: 'bottomNavigation', content: {
+  isVisible: true
+}}});
+
+// Hide tab bar
+await jsbridge.call({ data: { action: 'bottomNavigation', content: {
+  isVisible: false
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- System Bars -->
@@ -429,6 +596,21 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="hideAllBars()">Hide All</button>
         <button onclick="showAllBars()">Show All</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call({ data: { action: 'systemBars', content: {
+  showStatusBar: true,
+  showSystemNavigation: true
+}}});
+
+// Immersive mode
+await jsbridge.call({ data: { action: 'systemBars', content: {
+  showStatusBar: false,
+  showSystemNavigation: false
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Haptic -->
@@ -438,6 +620,14 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="triggerHaptic()">Vibrate</button>
         <button onclick="multipleHaptics()">3x Vibrate</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call({ data: { action: 'haptic', content: {
+  vibrate: true
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Navigation -->
@@ -448,6 +638,21 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="navigateExternal()">External URL</button>
         <button onclick="goBack()">Go Back</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Load URL in WebView
+await jsbridge.call({ data: { action: 'navigation', content: {
+  url: 'https://example.com',
+  external: false // true = open in browser
+}}});
+
+// Go back
+await jsbridge.call({ data: { action: 'navigation', content: {
+  goBack: true
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- System Actions -->
@@ -456,23 +661,61 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
     <div class="button-group">
         <button onclick="copyToClipboard()">Copy to Clipboard</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call({ data: { action: 'copyToClipboard', content: {
+  text: 'Text to copy'
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Lifecycle -->
 <div class="section">
     <h2>Lifecycle Events</h2>
-    <p style="color:#666;font-size:14px;">Native sends <code>focused</code> / <code>defocused</code> events automatically. Current state:</p>
-    <div id="lifecycleStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:#e8f5e9;color:#2e7d32;font-weight:600;font-size:15px;display:inline-block;">focused</div>
+    <p style="color:var(--text-secondary);font-size:14px;">Native sends <code>focused</code> / <code>defocused</code> events automatically. Current state:</p>
+    <div id="lifecycleStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--success);font-weight:600;font-size:15px;display:inline-block;">focused</div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Native sends these automatically — just listen:
+jsbridge.on((msg) => {
+  if (msg.data.action === 'lifecycle') {
+    const event = msg.data.content.event;
+    // event: 'focused' | 'defocused'
+    console.log('App', event);
+  }
+});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Refresh / Push -->
 <div class="section">
     <h2>Refresh / Push Events</h2>
-    <p style="color:#666;font-size:14px;">Native sends push events automatically. Latest:</p>
-    <div id="pushStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:#e3f2fd;color:#1565c0;font-weight:600;font-size:15px;display:inline-block;">waiting...</div>
+    <p style="color:var(--text-secondary);font-size:14px;">Native sends push events automatically. Latest:</p>
+    <div id="pushStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--accent);font-weight:600;font-size:15px;display:inline-block;">waiting...</div>
     <div class="button-group" style="margin-top:12px;">
         <button onclick="triggerRefresh()">Trigger Refresh</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Listen for push events from native:
+jsbridge.on((msg) => {
+  if (msg.data.action === 'onPushNotification') {
+    const { url, message } = msg.data.content;
+    console.log('Push:', message, url);
+  }
+});
+
+// Tell native to refresh (web → native):
+await jsbridge.call({ data: { action: 'refresh', content: {
+  command: 'refresh'
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Secure Storage -->
@@ -483,6 +726,27 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="loadData()">Load</button>
         <button onclick="removeData()">Remove</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Save (Android: EncryptedSharedPreferences, iOS: Keychain)
+await jsbridge.call({ data: { action: 'saveSecureData', content: {
+  key: 'auth_token',
+  value: 'eyJhbGci...'
+}}});
+
+// Load
+const result = await jsbridge.call({ data: { action: 'loadSecureData', content: {
+  key: 'auth_token'
+}}});
+// → { value: 'eyJhbGci...' }
+
+// Remove
+await jsbridge.call({ data: { action: 'removeSecureData', content: {
+  key: 'auth_token'
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Analytics -->
@@ -492,6 +756,21 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="trackEvent()">Track Event</button>
         <button onclick="trackScreen()">Track Screen</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Fire & forget — no await needed
+jsbridge.call({ data: { action: 'trackEvent', content: {
+  event: 'button_click',
+  params: { screen: 'checkout', item: 'submit' }
+}}});
+
+jsbridge.call({ data: { action: 'trackScreen', content: {
+  screenName: 'Checkout',
+  screenClass: 'CheckoutScreen'
+}}});</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Schema Versioning -->
@@ -501,6 +780,19 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         <button onclick="checkSchemaVersion()">Check Schema</button>
         <button onclick="testVersionCompatibility()">Test Compatibility</button>
     </div>
+    <details class="collapsible" style="margin-top:12px;">
+        <summary>Spec &amp; Usage</summary>
+        <div class="collapsible-content">
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">// Check current schema version
+console.log(jsbridge.schemaVersion); // → 1
+
+// Version is sent automatically in every call:
+// { version: 1, id: "msg_...", data: { action: "..." } }
+//
+// Native silently ignores messages with version > its own,
+// so newer web code degrades gracefully on older apps.</textarea></div>
+        </div>
+    </details>
 </div>
 
 <!-- Tests -->
@@ -514,6 +806,27 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
 </div>
 
 <script>
+    // -- theme ------------------------------------------------------------
+    function cmTheme(theme) { return theme === 'dark' ? 'material-darker' : 'neat'; }
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('themeToggle').textContent = theme === 'dark' ? '🌙' : '☀️';
+        var t = cmTheme(theme);
+        document.querySelectorAll('.CodeMirror').forEach(function (el) {
+            if (el.CodeMirror) el.CodeMirror.setOption('theme', t);
+        });
+    }
+
+    function toggleTheme() {
+        var current = document.documentElement.getAttribute('data-theme');
+        setTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        setTheme('light');
+    }
+
     // -- configurable bridge name ----------------------------------------
     var BRIDGE = 'jsbridge';
 
@@ -585,11 +898,18 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
         var action = data.action;
         var content = data.content;
 
+        if (action === 'themeChanged') {
+            var theme = (content && content.theme) || 'dark';
+            setTheme(theme);
+            log('Theme: ' + theme, 'info');
+            return;
+        }
+
         if (action === 'onPushNotification') {
             var msg = (content && content.message) || 'no message';
             log('Push: ' + msg, 'success');
             var el = document.getElementById('pushStatus');
-            if (el) { el.textContent = msg; el.style.background = '#e8f5e9'; el.style.color = '#2e7d32'; }
+            if (el) { el.textContent = msg; el.style.background = 'var(--info-bg)'; el.style.color = 'var(--success)'; }
             return;
         }
 
@@ -599,8 +919,8 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
             var el = document.getElementById('lifecycleStatus');
             if (el) {
                 el.textContent = event;
-                el.style.background = event === 'focused' ? '#e8f5e9' : '#fce4ec';
-                el.style.color = event === 'focused' ? '#2e7d32' : '#c62828';
+                el.style.background = 'var(--info-bg)';
+                el.style.color = event === 'focused' ? 'var(--success)' : 'var(--error)';
             }
             return;
         }
@@ -890,6 +1210,19 @@ const insets = await jsbridge.call({ data: { action: 'getInsets' } });
     if (window[BRIDGE] && window[BRIDGE].schemaVersion != null) {
         initBridge();
     }
+
+    // -- CodeMirror syntax highlighting ----------------------------------
+    var currentCmTheme = cmTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    document.querySelectorAll('.cm-code').forEach(function (textarea) {
+        CodeMirror.fromTextArea(textarea, {
+            mode: textarea.getAttribute('data-mode') || 'javascript',
+            theme: currentCmTheme,
+            readOnly: true,
+            lineNumbers: false,
+            viewportMargin: Infinity,
+            scrollbarStyle: null,
+        });
+    });
 </script>
 </body>
 </html>

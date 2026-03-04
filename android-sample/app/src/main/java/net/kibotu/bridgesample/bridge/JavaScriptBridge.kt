@@ -173,7 +173,13 @@ class JavaScriptBridge(
         val message = JSONObject()
         val data = JSONObject().apply {
             put("action", action)
-            if (content != null) put("content", content)
+            if (content != null) {
+                val jsonContent = when (content) {
+                    is Map<*, *> -> JSONObject(content)
+                    else -> content
+                }
+                put("content", jsonContent)
+            }
         }
         message.put("data", data)
         return message.toString()
