@@ -49,7 +49,7 @@ class BoundsRespectingWebView: WKWebView {
 }
 
 /// UIViewController that hosts the WKWebView and manages the bridge
-class WebViewController: UIViewController, WKNavigationDelegate {
+class WebViewController: UIViewController, WKNavigationDelegate, WindowFocusObserver {
     var webView: WKWebView!
     var bridge: JavaScriptBridge?
     var url: URL?
@@ -89,6 +89,29 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         }
     }
 
+    // MARK: - WindowFocusObserver
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        windowFocusDidAppear()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        windowFocusWillDisappear()
+    }
+
+    func onWindowFocusChanged(hasFocus: Bool) {
+        if hasFocus {
+            bridge?.sendToWeb(action: "lifecycle", content: ["event": "focused"])
+            SafeAreaService.shared.pushToBridge(bridge)
+        } else {
+            bridge?.sendToWeb(action: "lifecycle", content: ["event": "defocused"])
+        }
+    }
+
+    // MARK: - Safe Area
+
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         updateContentInsets()
@@ -116,14 +139,5 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         Orchard.e("[WebView] Provisional navigation failed: \(error.localizedDescription)")
-    }
-
-    func onWindowFocusChanged(hasFocus: Bool) {
-        if hasFocus {
-            bridge?.sendToWeb(action: "lifecycle", content: ["event": "focused"])
-            SafeAreaService.shared.pushToBridge(bridge)
-        } else {
-            bridge?.sendToWeb(action: "lifecycle", content: ["event": "defocused"])
-        }
     }
 }

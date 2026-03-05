@@ -28,13 +28,6 @@ struct MainTabView: View {
         }
         .accentColor(.accentBlue)
         .statusBar(hidden: systemUIState.isStatusBarHidden)
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            currentBridge?.notifyLifecycleEvent("focused")
-            SafeAreaService.shared.pushToBridge(currentBridge)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            currentBridge?.notifyLifecycleEvent("defocused")
-        }
         .onReceive(themeManager.$isDarkMode.dropFirst()) { isDark in
             currentBridge?.sendToWeb(action: "themeChanged", content: [
                 "theme": isDark ? "dark" : "light"
