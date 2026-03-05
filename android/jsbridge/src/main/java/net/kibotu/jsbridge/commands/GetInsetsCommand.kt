@@ -1,8 +1,9 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import android.os.Build
 import android.view.WindowInsets
-import com.github.florent37.application.provider.ActivityProvider
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,13 +18,13 @@ import timber.log.Timber
  * const insets = await jsbridge.call({ data: { action: 'getInsets' } });
  * ```
  */
-class GetInsetsCommand : BridgeCommand {
+class GetInsetsCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "getInsets"
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.Main) {
         try {
-            val activity = ActivityProvider.currentActivity
+            val activity = BridgeContextProvider.findActivity(contextProvider())
                 ?: return@withContext BridgeResponseUtils.createErrorResponse(
                     "NO_ACTIVITY",
                     "No active activity"

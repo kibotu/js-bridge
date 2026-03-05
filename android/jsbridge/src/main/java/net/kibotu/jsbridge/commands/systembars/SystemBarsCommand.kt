@@ -1,8 +1,9 @@
 package net.kibotu.jsbridge.commands.systembars
 
+import android.content.Context
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
 import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +26,7 @@ import timber.log.Timber
  * **Why Dispatchers.Main:**
  * Window property modifications must happen on UI thread. Android will crash otherwise.
  */
-class SystemBarsCommand : BridgeCommand {
+class SystemBarsCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "systemBars"
 
@@ -37,7 +38,7 @@ class SystemBarsCommand : BridgeCommand {
 
             Timber.i("[handle] showStatusBar=$showStatusBar showSystemNavigation=$showSystemNavigation")
 
-            val activity = ActivityProvider.currentActivity
+            val activity = BridgeContextProvider.findActivity(contextProvider())
                 ?: return@withContext BridgeResponseUtils.createErrorResponse(
                     "NO_ACTIVITY",
                     "No active activity"

@@ -1,12 +1,11 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import com.github.florent37.application.provider.application
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -28,12 +27,12 @@ import timber.log.Timber
  * Settings are separate activity stack. New task ensures proper back navigation
  * and prevents settings from becoming part of app's navigation history.
  */
-class OpenSettingsCommand : BridgeCommand {
+class OpenSettingsCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "openSettings"
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.Main) {
-        val context = requireNotNull(ActivityProvider.currentActivity ?: application)
+        val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             data = Uri.fromParts("package", context.packageName, null)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK

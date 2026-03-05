@@ -1,11 +1,10 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import android.widget.Toast
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import com.github.florent37.application.provider.application
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -34,7 +33,7 @@ import timber.log.Timber
  * If no Activity is available (rare edge case), app context works for Toasts.
  * Ensures toast can always be shown.
  */
-class ShowToastCommand : BridgeCommand {
+class ShowToastCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "showToast"
 
@@ -48,7 +47,7 @@ class ShowToastCommand : BridgeCommand {
         }
 
         try {
-            val context = ActivityProvider.currentActivity ?: application
+            val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
             val duration = BridgeParsingUtils.parseDuration(content)
             Toast.makeText(context, message, duration).show()
             BridgeResponseUtils.createSuccessResponse()

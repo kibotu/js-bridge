@@ -163,7 +163,7 @@ fun Screen(
                 }
                 composable("tab2") {
                     WebViewScreen(
-                        url = "https://kibotu.net/check24/jenkins/safearea/",
+                        url = "https://kibotu.github.io/js-bridge/",
                         onBridgeReady = { onBridgeReady(it) }
                     )
                 }

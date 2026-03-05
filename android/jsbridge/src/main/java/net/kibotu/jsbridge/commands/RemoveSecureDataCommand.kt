@@ -1,12 +1,11 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import com.github.florent37.application.provider.application
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -34,7 +33,7 @@ import timber.log.Timber
  * - Privacy compliance: user requests data deletion
  * - Session management: clear expired/invalid tokens
  */
-class RemoveSecureDataCommand : BridgeCommand {
+class RemoveSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "removeSecureData"
 
@@ -49,7 +48,7 @@ class RemoveSecureDataCommand : BridgeCommand {
         }
 
         try {
-            val context = ActivityProvider.currentActivity ?: application
+            val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
 
             val masterKey = MasterKey.Builder(requireNotNull(context))
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)

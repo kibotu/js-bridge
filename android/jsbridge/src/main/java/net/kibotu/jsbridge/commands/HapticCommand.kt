@@ -5,16 +5,15 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import com.github.florent37.application.provider.application
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
-class HapticCommand : BridgeCommand {
+class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "haptic"
 
@@ -29,7 +28,7 @@ class HapticCommand : BridgeCommand {
                     return@withContext BridgeResponseUtils.createSuccessResponse()
                 }
 
-                val context = requireNotNull(ActivityProvider.currentActivity ?: application)
+                val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
                 val vibrator = getVibrator(context)
                     ?: return@withContext BridgeResponseUtils.createErrorResponse(
                         "VIBRATOR_UNAVAILABLE",

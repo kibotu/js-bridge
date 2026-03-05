@@ -1,5 +1,6 @@
 package net.kibotu.jsbridge
 
+import android.content.Context
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.CheckNetworkStatusCommand
 import net.kibotu.jsbridge.commands.CopyToClipboardCommand
@@ -43,27 +44,31 @@ object DefaultCommands {
      * @param getBridge Lazy accessor for the bridge instance, required by
      *   commands that push safe-area updates back to the WebView
      *   (e.g. TopNavigationCommand, BottomNavigationCommand).
+     *   Also used to derive the [Context] for commands that need it.
      */
-    fun all(getBridge: () -> JavaScriptBridge? = { null }): List<BridgeCommand> = listOf(
-        DeviceInfoCommand(),
-        CheckNetworkStatusCommand(),
-        SystemBarsCommand(),
-        GetInsetsCommand(),
-        HapticCommand(),
-        RequestPermissionsCommand(),
-        OpenSettingsCommand(),
-        CopyToClipboardCommand(),
-        OpenUrlCommand(),
-        NavigationCommand(),
-        TopNavigationCommand(getBridge),
-        BottomNavigationCommand(getBridge),
-        ShowToastCommand(),
-        ShowAlertCommand(),
-        SaveSecureDataCommand(),
-        LoadSecureDataCommand(),
-        RemoveSecureDataCommand(),
-        TrackEventCommand(),
-        TrackScreenCommand(),
-        RefreshCommand()
-    )
+    fun all(getBridge: () -> JavaScriptBridge? = { null }): List<BridgeCommand> {
+        val contextProvider: () -> Context? = { getBridge()?.context }
+        return listOf(
+            DeviceInfoCommand(contextProvider),
+            CheckNetworkStatusCommand(contextProvider),
+            SystemBarsCommand(contextProvider),
+            GetInsetsCommand(contextProvider),
+            HapticCommand(contextProvider),
+            RequestPermissionsCommand(),
+            OpenSettingsCommand(contextProvider),
+            CopyToClipboardCommand(contextProvider),
+            OpenUrlCommand(),
+            NavigationCommand(contextProvider),
+            TopNavigationCommand(getBridge),
+            BottomNavigationCommand(getBridge),
+            ShowToastCommand(contextProvider),
+            ShowAlertCommand(contextProvider),
+            SaveSecureDataCommand(contextProvider),
+            LoadSecureDataCommand(contextProvider),
+            RemoveSecureDataCommand(contextProvider),
+            TrackEventCommand(),
+            TrackScreenCommand(),
+            RefreshCommand()
+        )
+    }
 }

@@ -3,7 +3,6 @@ package net.kibotu.jsbridge
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.github.florent37.application.provider.ActivityProvider
 import net.kibotu.jsbridge.commands.bottomnavigation.BottomNavigationService
 import net.kibotu.jsbridge.commands.topnavigation.TopNavigationService
 import timber.log.Timber
@@ -25,7 +24,7 @@ object SafeAreaService {
     fun pushTobridge(bridge: JavaScriptBridge?) {
         if (bridge == null) return
 
-        val activity = ActivityProvider.currentActivity ?: return
+        val activity = BridgeContextProvider.findActivity(bridge.context) ?: return
         val density = activity.resources.displayMetrics.density
         val rootView: View = activity.window.decorView
 

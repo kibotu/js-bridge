@@ -32,7 +32,6 @@ kotlin {
 }
 
 dependencies {
-    implementation("net.kibotu:ApplicationProvider:2.1.5")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")

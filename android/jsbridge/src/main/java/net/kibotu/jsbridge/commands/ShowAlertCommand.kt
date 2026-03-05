@@ -1,10 +1,10 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import androidx.appcompat.app.AlertDialog
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -34,7 +34,7 @@ import timber.log.Timber
  * Confirmations before destructive actions, important notices, error messages
  * requiring acknowledgment.
  */
-class ShowAlertCommand : BridgeCommand {
+class ShowAlertCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "showAlert"
 
@@ -51,7 +51,7 @@ class ShowAlertCommand : BridgeCommand {
         }
 
         try {
-            val activity = ActivityProvider.currentActivity
+            val activity = BridgeContextProvider.findActivity(contextProvider())
             if (activity == null) {
                 return@withContext BridgeResponseUtils.createErrorResponse(
                     "NO_ACTIVITY",

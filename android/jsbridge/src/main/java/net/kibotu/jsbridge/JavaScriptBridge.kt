@@ -31,6 +31,9 @@ class JavaScriptBridge(
     private val commands: List<BridgeCommand>,
     private val bridgeName: String = DEFAULT_BRIDGE_NAME
 ) {
+    /** The WebView's context, used by commands and services to resolve Activity/Application. */
+    val context get() = webView.context
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private val callbackResponse get() = "__${bridgeName}_handleResponse"

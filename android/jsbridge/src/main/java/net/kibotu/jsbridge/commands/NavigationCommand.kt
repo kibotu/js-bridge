@@ -1,10 +1,10 @@
 package net.kibotu.jsbridge.commands
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import com.github.florent37.application.provider.ActivityProvider
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -13,7 +13,7 @@ import timber.log.Timber
 /**
  * Handles multiple navigation patterns: back navigation, close, internal/external URLs.
  */
-class NavigationCommand : BridgeCommand {
+class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "navigation"
 
@@ -28,7 +28,7 @@ class NavigationCommand : BridgeCommand {
 
             when {
                 goBack == true -> {
-                    val activity = ActivityProvider.currentActivity as? AppCompatActivity
+                    val activity = BridgeContextProvider.findActivity(contextProvider()) as? AppCompatActivity
                     if (activity == null) {
                         return@withContext BridgeResponseUtils.createErrorResponse(
                             "NO_ACTIVITY",
@@ -39,7 +39,7 @@ class NavigationCommand : BridgeCommand {
                 }
 
                 close == true -> {
-                    val activity = ActivityProvider.currentActivity
+                    val activity = BridgeContextProvider.findActivity(contextProvider())
                     if (activity == null) {
                         return@withContext BridgeResponseUtils.createErrorResponse(
                             "NO_ACTIVITY",
