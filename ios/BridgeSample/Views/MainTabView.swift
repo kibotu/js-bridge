@@ -10,6 +10,7 @@ struct MainTabView: View {
     @ObservedObject private var bottomNavService = BottomNavigationService.shared
     @ObservedObject private var topNavService = TopNavigationService.shared
     @ObservedObject private var systemUIState = SystemUIState.shared
+    @ObservedObject private var themeService = ThemeService.shared
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -41,6 +42,9 @@ struct MainTabView: View {
             currentBridge?.sendToWeb(action: "themeChanged", content: [
                 "theme": isDark ? "dark" : "light"
             ])
+        }
+        .onReceive(themeService.$requestedTheme.dropFirst()) { theme in
+            themeManager.isDarkMode = (theme == "dark")
         }
     }
 

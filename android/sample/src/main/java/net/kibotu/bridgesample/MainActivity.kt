@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SafeAreaService
 import net.kibotu.jsbridge.commands.refresh.RefreshService
+import net.kibotu.jsbridge.commands.theme.ThemeService
 import net.kibotu.bridgesample.misc.weak
 import net.kibotu.bridgesample.ui.Screen
 import net.kibotu.bridgesample.ui.theme.BridgeSampleTheme
@@ -44,6 +45,12 @@ class MainActivity : ComponentActivity() {
                         "themeChanged",
                         mapOf("theme" to if (isDarkTheme) "dark" else "light")
                     )
+                }
+
+                LaunchedEffect(Unit) {
+                    ThemeService.onThemeChanged.collect { theme ->
+                        isDarkTheme = (theme == "dark")
+                    }
                 }
 
                 Screen(

@@ -63,6 +63,9 @@ public struct DefaultCommands {
             TrackEventHandler(),
             TrackScreenHandler(),
 
+            // Theme
+            ThemeChangedHandler(),
+
             // Refresh
             RefreshHandler(),
         ]

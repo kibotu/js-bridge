@@ -794,6 +794,8 @@ console.log(jsbridge.schemaVersion); // → 1
     // -- theme ------------------------------------------------------------
     function cmTheme(theme) { return theme === 'dark' ? 'material-darker' : 'neat'; }
 
+    var _themeFromNative = false;
+
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         document.getElementById('themeToggle').textContent = theme === 'dark' ? '🌙' : '☀️';
@@ -801,6 +803,10 @@ console.log(jsbridge.schemaVersion); // → 1
         document.querySelectorAll('.CodeMirror').forEach(function (el) {
             if (el.CodeMirror) el.CodeMirror.setOption('theme', t);
         });
+        if (!_themeFromNative && typeof bridge !== 'undefined') {
+            bridge.call('themeChanged', { theme: theme });
+        }
+        _themeFromNative = false;
     }
 
     function toggleTheme() {
@@ -895,6 +901,7 @@ console.log(jsbridge.schemaVersion); // → 1
 
         if (action === 'themeChanged') {
             var theme = (content && content.theme) || 'dark';
+            _themeFromNative = true;
             setTheme(theme);
             log('Theme: ' + theme, 'info');
             return;

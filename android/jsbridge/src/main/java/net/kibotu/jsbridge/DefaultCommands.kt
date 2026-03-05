@@ -20,6 +20,7 @@ import net.kibotu.jsbridge.commands.bottomnavigation.BottomNavigationCommand
 import net.kibotu.jsbridge.commands.refresh.RefreshCommand
 import net.kibotu.jsbridge.commands.systembars.SystemBarsCommand
 import net.kibotu.jsbridge.commands.topnavigation.TopNavigationCommand
+import net.kibotu.jsbridge.commands.theme.ThemeChangedCommand
 import net.kibotu.jsbridge.commands.tracking.TrackEventCommand
 import net.kibotu.jsbridge.commands.tracking.TrackScreenCommand
 
@@ -66,6 +67,7 @@ object DefaultCommands {
             SaveSecureDataCommand(contextProvider),
             LoadSecureDataCommand(contextProvider),
             RemoveSecureDataCommand(contextProvider),
+            ThemeChangedCommand(),
             TrackEventCommand(),
             TrackScreenCommand(),
             RefreshCommand()
