@@ -27,9 +27,6 @@ struct MainTabView: View {
                 }
         }
         .accentColor(.accentBlue)
-        .onReceive(bottomNavService.$config) { config in
-            setTabBarHidden(!config.isVisible)
-        }
         .statusBar(hidden: systemUIState.isStatusBarHidden)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             currentBridge?.notifyLifecycleEvent("focused")
@@ -69,6 +66,7 @@ struct MainTabView: View {
         }
         .background(Color.slateBackground)
         .ignoresSafeArea(.all, edges: .all)
+        .tabBarHidden(!bottomNavService.config.isVisible, animated: true)
     }
 
     private var webTab: some View {
@@ -89,36 +87,7 @@ struct MainTabView: View {
         }
         .background(Color.slateBackground)
         .ignoresSafeArea(.all, edges: .all)
-    }
-
-    // MARK: - Tab Bar Visibility
-
-    private func setTabBarHidden(_ hidden: Bool) {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene }).first,
-              let window = windowScene.windows.first,
-              let tabBarController = findTabBarController(from: window.rootViewController)
-        else { return }
-
-        let tabBar = tabBarController.tabBar
-        let screenHeight = window.frame.height
-        let tabBarTop = tabBar.frame.origin.y
-        let offset = screenHeight - tabBarTop
-
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
-            tabBar.transform = hidden ? CGAffineTransform(translationX: 0, y: offset) : .identity
-        }
-    }
-
-    private func findTabBarController(from vc: UIViewController?) -> UITabBarController? {
-        if let tbc = vc as? UITabBarController { return tbc }
-        for child in vc?.children ?? [] {
-            if let found = findTabBarController(from: child) { return found }
-        }
-        if let presented = vc?.presentedViewController {
-            return findTabBarController(from: presented)
-        }
-        return nil
+        .tabBarHidden(!bottomNavService.config.isVisible, animated: true)
     }
 
     // MARK: - Helpers
@@ -137,5 +106,77 @@ struct MainTabView: View {
                 "message": "Lorem Ipsum"
             ])
         }
+    }
+}
+
+// MARK: - Tab Bar Visibility Modifier
+
+private struct TabBarHiddenModifier: ViewModifier {
+    let isHidden: Bool
+    let animated: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .toolbar(isHidden ? .hidden : .visible, for: .tabBar)
+                .animation(animated ? .easeInOut(duration: 0.3) : nil, value: isHidden)
+        } else {
+            content
+                .onAppear { setTabBarHidden(isHidden) }
+                .onChange(of: isHidden) { setTabBarHidden($0) }
+        }
+    }
+
+    private func setTabBarHidden(_ hidden: Bool) {
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene }).first,
+              let window = windowScene.windows.first,
+              let tabBarController = findTabBarController(from: window.rootViewController)
+        else { return }
+
+        let tabBar = tabBarController.tabBar
+        let tabBarHeight = tabBar.frame.height
+
+        guard animated else {
+            tabBar.isHidden = hidden
+            if let containerView = tabBarController.view {
+                containerView.frame.size.height = window.frame.height + (hidden ? tabBarHeight : -tabBarHeight)
+            }
+            return
+        }
+
+        if hidden {
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+                tabBar.alpha = 0
+                tabBar.frame.origin.y = window.frame.maxY
+            } completion: { _ in
+                tabBar.isHidden = true
+            }
+        } else {
+            tabBar.isHidden = false
+            tabBar.alpha = 0
+            tabBar.frame.origin.y = window.frame.maxY
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+                tabBar.alpha = 1
+                tabBar.frame.origin.y = window.frame.maxY - tabBarHeight
+            }
+        }
+    }
+
+    private func findTabBarController(from vc: UIViewController?) -> UITabBarController? {
+        if let tbc = vc as? UITabBarController { return tbc }
+        for child in vc?.children ?? [] {
+            if let found = findTabBarController(from: child) { return found }
+        }
+        if let presented = vc?.presentedViewController {
+            return findTabBarController(from: presented)
+        }
+        return nil
+    }
+}
+
+extension View {
+    func tabBarHidden(_ hidden: Bool, animated: Bool = true) -> some View {
+        modifier(TabBarHiddenModifier(isHidden: hidden, animated: animated))
     }
 }
