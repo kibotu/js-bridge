@@ -285,33 +285,111 @@ Web: window.jsbridge.call() / .on()
 
 ### Android Setup
 
-```kotlin
-// In your Composable or Fragment
-val bridge = JavaScriptBridge(webView, DefaultBridgeMessageHandler())
-webView.addJavascriptInterface(bridge, JavaScriptBridge.DEFAULT_BRIDGE_NAME)
+Add the `jsbridge` library module to your project:
 
-// After page loads
-bridge.injectBridgeScript()
+```kotlin
+// settings.gradle.kts
+include(":jsbridge")
+
+// app/build.gradle.kts
+dependencies {
+    implementation(project(":jsbridge"))
+}
+```
+
+Wire it up with explicit command configuration:
+
+```kotlin
+// All default commands
+var bridgeRef: JavaScriptBridge? = null
+val bridge = JavaScriptBridge.inject(
+    webView = webView,
+    commands = DefaultCommands.all(getBridge = { bridgeRef })
+)
+bridgeRef = bridge
+
+// Or pick only the commands you need
+val bridge = JavaScriptBridge.inject(
+    webView = webView,
+    commands = listOf(
+        DeviceInfoCommand(),
+        ShowToastCommand(),
+        HapticCommand(),
+    )
+)
 
 // Send events to web
 bridge.sendToWeb(action = "lifecycle", content = mapOf("event" to "focused"))
-
-// Push safe area CSS whenever bars change
-bridge.updateSafeAreaCSS(insetTop = 54, insetBottom = 34, statusBarHeight = 24, ...)
 ```
 
 ### iOS Setup
 
+Add the `JSBridge` Swift Package (local dependency):
+
 ```swift
-// In your ViewController
-let bridge = JavaScriptBridge(webView: webView, viewController: self)
-// Script injection happens automatically at document start
+// In your Package.swift or Xcode project
+.package(path: "../JSBridge")
+```
+
+Wire it up with explicit command configuration:
+
+```swift
+import JSBridge
+
+// All default commands
+let bridge = JavaScriptBridge(
+    webView: webView,
+    viewController: self,
+    commands: DefaultCommands.all(viewController: self, webView: webView)
+)
+
+// Or pick only the commands you need
+let bridge = JavaScriptBridge(
+    webView: webView,
+    viewController: self,
+    commands: [
+        DeviceInfoHandler(),
+        ShowToastHandler(viewController: self),
+        HapticHandler(),
+    ]
+)
 
 // Send events to web
 bridge.sendToWeb(action: "lifecycle", content: ["event": "focused"])
+```
 
-// Push safe area CSS
-bridge.updateSafeAreaCSS(insetTop: 54, insetBottom: 34, statusBarHeight: 24, ...)
+### Multiple Bridges Per WebView
+
+You can register multiple bridges with different names on the same WebView, each handling different actions:
+
+```kotlin
+// Android
+val mainBridge = JavaScriptBridge.inject(
+    webView, bridgeName = "jsbridge",
+    commands = listOf(DeviceInfoCommand(), ShowToastCommand())
+)
+val analyticsBridge = JavaScriptBridge.inject(
+    webView, bridgeName = "analytics",
+    commands = listOf(TrackEventCommand(), TrackScreenCommand())
+)
+```
+
+```swift
+// iOS
+let mainBridge = JavaScriptBridge(
+    webView: webView, viewController: self, bridgeName: "jsbridge",
+    commands: [DeviceInfoHandler(), ShowToastHandler(viewController: self)]
+)
+let analyticsBridge = JavaScriptBridge(
+    webView: webView, viewController: self, bridgeName: "analytics",
+    commands: [TrackEventHandler(), TrackScreenHandler()]
+)
+```
+
+```js
+// Web -- each bridge is independent
+await jsbridge.call('deviceInfo');
+await analytics.call('trackEvent', { event: 'click' });
 ```
 
 ### Adding a New Command
@@ -342,19 +420,22 @@ class MyHandler: BridgeCommand {
 }
 ```
 
-**2. Register it (one line):**
+**2. Register it when creating the bridge:**
 
 ```kotlin
-// Android: DefaultBridgeMessageHandler.kt
-private val commands = listOf(
-    // ...existing commands...
-    MyCommand()  // ← done
+// Android
+val bridge = JavaScriptBridge.inject(
+    webView = webView,
+    commands = DefaultCommands.all(getBridge = { bridge }) + MyCommand()
 )
 ```
 
 ```swift
-// iOS: JavaScriptBridge.swift registerCommandHandlers()
-register(handler: MyHandler())  // ← done
+// iOS
+let bridge = JavaScriptBridge(
+    webView: webView, viewController: self,
+    commands: DefaultCommands.all(viewController: self, webView: webView) + [MyHandler()]
+)
 ```
 
 **3. Call from web:**
@@ -369,13 +450,20 @@ You didn't touch the bridge infrastructure, the JS layer, or any other command. 
 
 ```kotlin
 // Android
-val bridge = JavaScriptBridge(webView, handler, bridgeName = "myApp")
-webView.addJavascriptInterface(bridge, "myApp")
+val bridge = JavaScriptBridge.inject(
+    webView = webView,
+    commands = DefaultCommands.all(),
+    bridgeName = "myApp"
+)
 ```
 
 ```swift
 // iOS
-let bridge = JavaScriptBridge(webView: webView, viewController: self, bridgeName: "myApp")
+let bridge = JavaScriptBridge(
+    webView: webView, viewController: self,
+    bridgeName: "myApp",
+    commands: DefaultCommands.all(viewController: self, webView: webView)
+)
 ```
 
 One parameter. Everything else -- the JS global, the callbacks, the message handler name -- updates automatically.
@@ -431,25 +519,37 @@ This is strictly better than injecting `padding-top: Xpx !important` because web
 
 ```
 check-mate/
-├── bridge.js                  # Unified JS (single source of truth, injected by both platforms)
+├── bridge.js                  # Unified JS (single source of truth)
 ├── index.html                 # Demo page (symlinked into both sample apps)
-├── android-sample/            # Android sample (Kotlin, Compose, Gradle)
-│   └── .../bridge/
-│       ├── JavaScriptBridge.kt
-│       ├── DefaultBridgeMessageHandler.kt
-│       └── commands/          # One file per action
-├── ios-sample/                # iOS sample (Swift, SwiftUI, Xcode)
-│   └── BridgeSample/Bridge/
-│       ├── JavaScriptBridge.swift
-│       ├── BridgeCommand.swift
-│       └── Commands/          # One file per action
+├── android/
+│   ├── jsbridge/              # Library module (net.kibotu.jsbridge)
+│   │   ├── build.gradle.kts
+│   │   └── src/main/java/net/kibotu/jsbridge/
+│   │       ├── JavaScriptBridge.kt
+│   │       ├── DefaultCommands.kt
+│   │       ├── SafeAreaService.kt
+│   │       ├── commands/      # One file per action
+│   │       └── decorators/    # WebViewClient/ChromeClient wrappers
+│   └── sample/                # Sample app (depends on :jsbridge)
+│       └── src/main/java/net/kibotu/bridgesample/
+├── ios/
+│   ├── JSBridge/              # Swift Package
+│   │   ├── Package.swift
+│   │   └── Sources/JSBridge/
+│   │       ├── JavaScriptBridge.swift
+│   │       ├── DefaultCommands.swift
+│   │       ├── SafeAreaService.swift
+│   │       ├── Commands/      # One file per action
+│   │       └── Resources/bridge.js
+│   └── BridgeSample/          # Sample app (depends on JSBridge)
+│       └── Views/
 └── CHANGELOG.md
 ```
 
 ### Building
 
-**Android:** Open `android-sample/` in Android Studio, hit Run.  
-**iOS:** Open `ios-sample/BridgeSample.xcodeproj` in Xcode, Cmd+R.
+**Android:** Open `android/` in Android Studio, hit Run on the `:sample` module.
+**iOS:** Open `ios/BridgeSample.xcodeproj` in Xcode, add JSBridge as a local SPM dependency, Cmd+R.
 
 Both apps load the same `index.html` demo page with all bridge features.
 
@@ -470,7 +570,18 @@ Batch with `Promise.all()`. Cache what doesn't change. Don't await what doesn't 
 
 ## Changelog
 
-### 2.1.0 (2026-03-05)
+### 3.0.0 (2026-03-05)
+
+Library extraction. Breaking changes:
+
+- **Android**: Bridge code extracted into `:jsbridge` library module (`net.kibotu.jsbridge`). Removed `BridgeMessageHandler` / `DefaultBridgeMessageHandler` indirection -- commands are now passed directly to `JavaScriptBridge.inject()`.
+- **iOS**: Bridge code extracted into `JSBridge` Swift Package. Commands are now passed to `JavaScriptBridge(commands:)` init -- no longer auto-registered.
+- **Both platforms**: Commands are opt-in via explicit configuration. Use `DefaultCommands.all()` for all defaults, or pick individual commands.
+- **Multiple bridges**: A single WebView can now host multiple named bridges (e.g. `jsbridge` + `analytics`) with independent command sets.
+- **JS loading**: Bridge JavaScript is loaded from bundled resources (`res/raw/bridge.js` on Android, SPM resource on iOS) instead of inline strings.
+- Directory structure: `android-sample/` → `android/`, `ios-sample/` → `ios/`
+
+### 2.1.0
 
 - `call()` now accepts both `call(action, content?, opts?)` shorthand and `call(msg, opts?)` object form
 - Added `cancelAll()` to reject all pending promises and clean up timeouts
