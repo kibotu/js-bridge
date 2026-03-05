@@ -29,13 +29,18 @@ jobs:
           sparse-checkout: index.html
           sparse-checkout-cone-mode: false
 
+      - name: Stage artifact
+        run: |
+          mkdir _site
+          cp index.html _site/
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
