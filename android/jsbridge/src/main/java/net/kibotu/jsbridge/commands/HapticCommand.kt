@@ -1,10 +1,12 @@
 package net.kibotu.jsbridge.commands
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.HapticFeedbackConstants
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -29,6 +31,13 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                 }
 
                 val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
+
+                if (tryPerformHapticFeedback(context)) {
+                    return@withContext BridgeResponseUtils.createSuccessResponse()
+                }
+
+                Timber.d("[handle] performHapticFeedback unavailable, falling back to Vibrator")
+
                 val vibrator = getVibrator(context)
                     ?: return@withContext BridgeResponseUtils.createErrorResponse(
                         "VIBRATOR_UNAVAILABLE",
@@ -42,14 +51,9 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                     )
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    vibrator.vibrate(50)
-                }
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
+                )
 
                 BridgeResponseUtils.createSuccessResponse()
             } catch (e: Exception) {
@@ -60,6 +64,26 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                 )
             }
         }
+
+    /**
+     * Uses [android.view.View.performHapticFeedback] on the Activity's decor view.
+     * This requires no VIBRATE permission and works reliably across OEMs on API 36+.
+     */
+    private fun tryPerformHapticFeedback(context: Context): Boolean {
+        val activity = context as? Activity ?: BridgeContextProvider.findActivity(context) ?: return false
+        val view = activity.window?.decorView ?: return false
+
+        val constant = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            HapticFeedbackConstants.CONFIRM
+        } else {
+            HapticFeedbackConstants.LONG_PRESS
+        }
+
+        return view.performHapticFeedback(
+            constant,
+            HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING or HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+        )
+    }
 
     private fun getVibrator(context: Context): Vibrator? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
