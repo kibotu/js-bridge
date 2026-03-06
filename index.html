@@ -1133,12 +1133,12 @@ console.log(jsbridge.schemaVersion); // → 1
 
     // -- navigation
     async function navigateInternal() {
-        try { await call('navigation', { url: 'https://example.com', external: false }); log('Internal nav triggered', 'success'); }
+        try { await call('navigation', { url: 'https://portfolio.kibotu.net/pages/open-source-projects/', external: false }); log('Internal nav triggered', 'success'); }
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
     async function navigateExternal() {
-        try { await call('navigation', { url: 'https://example.com', external: true }); log('External nav triggered', 'success'); }
+        try { await call('navigation', { url: 'https://portfolio.kibotu.net/pages/open-source-projects/', external: true }); log('External nav triggered', 'success'); }
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
