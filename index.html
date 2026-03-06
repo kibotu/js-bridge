@@ -221,7 +221,7 @@
             border-radius: 8px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 12px;
-            max-height: 300px;
+            height: 200px;
             overflow-y: auto;
             line-height: 1.5;
             border: 1px solid var(--console-border);
@@ -454,6 +454,10 @@ const info = await jsbridge.call('deviceInfo');</textarea></div>
         <button onclick="openSettings()">Open Settings</button>
     </div>
     <div id="deviceInfo" class="device-info" style="display: none;"></div>
+    <div id="networkInfo" class="device-info" style="display: none;">
+        <div class="device-info-item"><strong>Status:</strong> <span id="networkStatus">--</span></div>
+        <div class="device-info-item"><strong>Type:</strong> <span id="networkType">--</span></div>
+    </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
@@ -713,6 +717,11 @@ await jsbridge.call('refresh', { command: 'refresh' });</textarea></div>
         <button onclick="loadData()">Load</button>
         <button onclick="removeData()">Remove</button>
     </div>
+    <div id="storageInfo" class="device-info" style="display: none;">
+        <div class="device-info-item"><strong>Operation:</strong> <span id="storageOp">--</span></div>
+        <div class="device-info-item"><strong>Key:</strong> <span id="storageKey">--</span></div>
+        <div class="device-info-item"><strong>Value:</strong> <span id="storageValue">--</span></div>
+    </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
@@ -764,6 +773,11 @@ jsbridge.call('trackScreen', {
     <div class="button-group">
         <button onclick="checkSchemaVersion()">Check Schema</button>
         <button onclick="testVersionCompatibility()">Test Compatibility</button>
+    </div>
+    <div id="schemaInfo" class="device-info" style="display: none;">
+        <div class="device-info-item"><strong>Version:</strong> <span id="schemaVersion">--</span></div>
+        <div class="device-info-item"><strong>Platform:</strong> <span id="schemaPlatform">--</span></div>
+        <div class="device-info-item"><strong>Compatibility:</strong> <span id="schemaCompat">--</span></div>
     </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
@@ -966,7 +980,15 @@ console.log(jsbridge.schemaVersion); // → 1
         try {
             log('Checking network...', 'info');
             var s = await call('networkState');
-            log('Network: ' + (s.connected ? 'Connected' : 'Disconnected') + ' (' + (s.type || '?') + ')', 'success');
+            var connected = s.connected ? 'Connected' : 'Disconnected';
+            var type = s.type || '?';
+            log('Network: ' + connected + ' (' + type + ')', 'success');
+            var el = document.getElementById('networkInfo');
+            el.style.display = 'block';
+            var statusEl = document.getElementById('networkStatus');
+            statusEl.textContent = connected;
+            statusEl.style.color = s.connected ? 'var(--success)' : 'var(--error)';
+            document.getElementById('networkType').textContent = type;
         } catch (e) { log('Error: ' + e.message, 'error'); throw e; }
     }
 
@@ -1139,18 +1161,29 @@ console.log(jsbridge.schemaVersion); // → 1
     }
 
     // -- storage
+    function updateStorageCard(op, key, value) {
+        var el = document.getElementById('storageInfo');
+        el.style.display = 'block';
+        var opEl = document.getElementById('storageOp');
+        opEl.textContent = op;
+        opEl.style.color = op === 'Removed' ? 'var(--warning)' : 'var(--success)';
+        document.getElementById('storageKey').textContent = key;
+        document.getElementById('storageValue').textContent = value;
+    }
+
     async function saveData() {
-        try { await call('saveSecureData', { key: 'demo_key', value: 'Demo ' + new Date().toISOString() }); log('Data saved', 'success'); }
+        var val = 'Demo ' + new Date().toISOString();
+        try { await call('saveSecureData', { key: 'demo_key', value: val }); log('Data saved', 'success'); updateStorageCard('Saved', 'demo_key', val); }
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
     async function loadData() {
-        try { var r = await call('loadSecureData', { key: 'demo_key' }); log('Loaded: ' + JSON.stringify(r), 'success'); }
+        try { var r = await call('loadSecureData', { key: 'demo_key' }); var v = (r && r.value) || '(empty)'; log('Loaded: ' + v, 'success'); updateStorageCard('Loaded', 'demo_key', v); }
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
     async function removeData() {
-        try { await call('removeSecureData', { key: 'demo_key' }); log('Data removed', 'success'); }
+        try { await call('removeSecureData', { key: 'demo_key' }); log('Data removed', 'success'); updateStorageCard('Removed', 'demo_key', '(deleted)'); }
         catch (e) { log('Error: ' + e.message, 'error'); }
     }
 
@@ -1166,8 +1199,21 @@ console.log(jsbridge.schemaVersion); // → 1
     }
 
     // -- schema versioning
+    function updateSchemaCard(compat) {
+        var el = document.getElementById('schemaInfo');
+        el.style.display = 'block';
+        document.getElementById('schemaVersion').textContent = 'v' + bridge.schemaVersion;
+        document.getElementById('schemaPlatform').textContent = bridge.platform;
+        if (compat != null) {
+            var compatEl = document.getElementById('schemaCompat');
+            compatEl.textContent = compat ? 'OK' : 'Failed';
+            compatEl.style.color = compat ? 'var(--success)' : 'var(--error)';
+        }
+    }
+
     function checkSchemaVersion() {
         log('Schema version: ' + bridge.schemaVersion, 'success');
+        updateSchemaCard(null);
     }
 
     async function testVersionCompatibility() {
@@ -1175,7 +1221,8 @@ console.log(jsbridge.schemaVersion); // → 1
         try {
             await call('deviceInfo');
             log('Version ' + bridge.schemaVersion + ' works', 'success');
-        } catch (e) { log('Error: ' + e.message, 'error'); }
+            updateSchemaCard(true);
+        } catch (e) { log('Error: ' + e.message, 'error'); updateSchemaCard(false); }
     }
 
     // -- tests

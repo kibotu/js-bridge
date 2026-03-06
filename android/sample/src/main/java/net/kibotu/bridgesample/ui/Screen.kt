@@ -208,7 +208,7 @@ fun Screen(
                     NavigationBarItem(
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 },
-                        label = { Text("Portfolio") },
+                        label = { Text("Website") },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.primary,
                             selectedTextColor = MaterialTheme.colorScheme.primary,
