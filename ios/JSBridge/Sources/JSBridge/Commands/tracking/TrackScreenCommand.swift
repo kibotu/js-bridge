@@ -1,7 +1,10 @@
 import Foundation
 import Orchard
 
-/// Command for tracking screen views (fire-and-forget)
+/// Logs screen view events from web content (fire-and-forget).
+///
+/// Separate from `TrackEventCommand` because analytics platforms typically
+/// treat screen views differently from arbitrary events.
 public final class TrackScreenCommand: BridgeCommand {
     public let action = "trackScreen"
 

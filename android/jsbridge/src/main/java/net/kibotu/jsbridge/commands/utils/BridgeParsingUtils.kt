@@ -4,7 +4,11 @@ import android.widget.Toast
 import org.json.JSONObject
 
 /**
- * Utility class for parsing bridge command parameters.
+ * Typed extraction helpers for bridge command content.
+ *
+ * Mirrors the iOS `Dictionary` extension in `BridgeParsingUtils.swift` so both
+ * platforms parse parameters the same way. Methods return empty/null rather than
+ * throwing -- validation is the command's responsibility, not the parser's.
  */
 object BridgeParsingUtils {
 

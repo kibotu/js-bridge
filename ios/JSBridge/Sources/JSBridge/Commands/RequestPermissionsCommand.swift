@@ -4,7 +4,10 @@ import CoreLocation
 import Photos
 import Orchard
 
-/// Requests system permissions on behalf of web content.
+/// Requests camera, microphone, and photo library permissions on behalf of web content.
+///
+/// Location is marked "unsupported" because `CLLocationManager` requires a delegate
+/// and continuous authorization flow that doesn't map cleanly to a single bridge call.
 public final class RequestPermissionsCommand: BridgeCommand {
     public let action = "requestPermissions"
 

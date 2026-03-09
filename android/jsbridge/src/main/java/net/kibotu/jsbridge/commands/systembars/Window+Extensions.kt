@@ -5,6 +5,14 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
+/**
+ * Convenience extensions that wrap [WindowInsetsControllerCompat] boilerplate.
+ *
+ * Using the Compat layer ensures consistent behavior across API levels and handles
+ * the deprecated flags transparently. Hidden bars use BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+ * so the user can still reveal them with a swipe.
+ */
+
 var Window.showSystemStatusBar: Boolean
     get() {
         throw NotImplementedError()

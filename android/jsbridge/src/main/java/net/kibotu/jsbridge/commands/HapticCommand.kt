@@ -15,6 +15,13 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
+/**
+ * Triggers haptic feedback so web content can provide tactile responses to user actions.
+ *
+ * Prefers [android.view.View.performHapticFeedback] because it respects system haptic
+ * settings and requires no VIBRATE permission. Falls back to [Vibrator] only when the
+ * view-level API is unavailable (e.g., no Activity window).
+ */
 class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
     override val action = "haptic"

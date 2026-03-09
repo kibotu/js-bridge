@@ -1,7 +1,7 @@
 import Foundation
 import Security
 
-/// Command for secure data storage (using Keychain)
+/// Persists sensitive key-value data to the iOS Keychain via `KeychainHelper`.
 public final class SaveSecureDataCommand: BridgeCommand {
     public let action = "saveSecureData"
 

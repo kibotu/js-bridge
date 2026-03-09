@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-/// Command for device information requests
+/// Provides device and app metadata so web content can adapt its UI and enrich analytics.
 public final class DeviceInfoCommand: BridgeCommand {
     public let action = "deviceInfo"
 
@@ -26,6 +26,9 @@ public final class DeviceInfoCommand: BridgeCommand {
         return fallback
     }
     
+    /// Returns the hardware identifier (e.g., "iPhone15,2") via `utsname`.
+    /// `UIDevice.model` only returns generic names like "iPhone", so `utsname`
+    /// is the way to get the specific model for diagnostics and feature detection.
     nonisolated private func getDeviceIdentifier() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)

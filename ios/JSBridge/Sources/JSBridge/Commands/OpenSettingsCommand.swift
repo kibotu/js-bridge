@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 import Orchard
 
-/// Command for opening app settings
+/// Opens the app's Settings page so users can manage permissions they previously denied.
 public final class OpenSettingsCommand: BridgeCommand {
     public let action = "openSettings"
 

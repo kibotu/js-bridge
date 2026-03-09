@@ -9,6 +9,16 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
+/**
+ * Configures the native top navigation bar from web content.
+ *
+ * After applying the config, pushes updated safe area insets to the WebView so
+ * web content can adjust its layout immediately (e.g., when the bar is hidden,
+ * content should extend behind the status bar).
+ *
+ * @param getBridge Lazy bridge reference -- nullable because the bridge may not
+ *   be fully initialized when this command is constructed via [DefaultCommands].
+ */
 class TopNavigationCommand(
     private val getBridge: () -> net.kibotu.jsbridge.JavaScriptBridge?
 ) : BridgeCommand {
@@ -52,6 +62,7 @@ class TopNavigationCommand(
     }
 }
 
+/** Snapshot of the top navigation bar appearance, observed by the host Activity. */
 data class TopNavigationConfig(
     val isVisible: Boolean = true,
     val showUpArrow: Boolean = false,

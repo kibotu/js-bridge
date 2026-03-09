@@ -8,6 +8,13 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
+/**
+ * Forwards theme change requests from web content to [ThemeService].
+ *
+ * The bridge intentionally does not apply the theme itself -- it just relays the
+ * preference. This keeps the library decoupled from any app-level ThemeManager and
+ * lets the host app decide how (and whether) to honor the request.
+ */
 class ThemeChangedCommand : BridgeCommand {
 
     override val action = "themeChanged"

@@ -1,7 +1,10 @@
 import Foundation
 import UIKit
 
-/// Command for showing alert dialogs
+/// Presents a native `UIAlertController` so web content can show platform-consistent dialogs.
+///
+/// `@unchecked Sendable` because the weak `viewController` ref is only accessed
+/// on `@MainActor`.
 public final class ShowAlertCommand: BridgeCommand, @unchecked Sendable {
     public let action = "showAlert"
     

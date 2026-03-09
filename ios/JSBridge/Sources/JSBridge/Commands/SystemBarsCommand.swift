@@ -3,7 +3,11 @@ import UIKit
 import SwiftUI
 import Orchard
 
-/// Shared state manager for system UI visibility
+/// Shared state for system status bar visibility, observed by the host app.
+///
+/// `ObservableObject` with `@Published` so SwiftUI views can react to changes.
+/// The host view controller typically reads `isStatusBarHidden` in its
+/// `prefersStatusBarHidden` override.
 @MainActor
 public final class SystemUIState: ObservableObject {
     public static let shared = SystemUIState()
@@ -13,7 +17,11 @@ public final class SystemUIState: ObservableObject {
     private init() {}
 }
 
-/// Command for system bars (status bar and navigation bar)
+/// Controls status bar visibility for immersive experiences.
+///
+/// Animates the transition for a polished feel. Unlike Android, iOS has no
+/// system navigation bar to toggle -- the home indicator is always managed
+/// by the system.
 public final class SystemBarsCommand: BridgeCommand {
     public let action = "systemBars"
 

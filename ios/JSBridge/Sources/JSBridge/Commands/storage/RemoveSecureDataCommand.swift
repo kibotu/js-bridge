@@ -1,6 +1,6 @@
 import Foundation
 
-/// Command for removing secure data from Keychain
+/// Deletes a value from the iOS Keychain. Useful for logout flows and privacy compliance.
 public final class RemoveSecureDataCommand: BridgeCommand {
     public let action = "removeSecureData"
 

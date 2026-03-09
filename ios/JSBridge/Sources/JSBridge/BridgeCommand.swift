@@ -28,7 +28,10 @@ public protocol BridgeCommand: Sendable {
     func handle(content: [String: Any]?) async throws -> [String: Any]?
 }
 
-/// Errors that can occur during bridge command handling
+/// Structured error type for the bridge layer.
+///
+/// Mirrors the Android `BridgeError` sealed class so both platforms produce
+/// identical error codes over the wire.
 public enum BridgeError: Error, Sendable {
     case invalidMessage
     case unknownAction(String)

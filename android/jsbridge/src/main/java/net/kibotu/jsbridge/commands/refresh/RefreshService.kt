@@ -7,6 +7,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Broadcasts refresh events triggered by web content.
+ *
+ * Uses [SharedFlow] because a refresh is a one-shot event, not persistent state --
+ * a new collector should not automatically replay the last refresh. The host app
+ * collects [onRefresh] to reload data, re-fetch configs, etc.
+ */
 object RefreshService {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)

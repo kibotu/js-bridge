@@ -1,7 +1,14 @@
 import Foundation
 import UIKit
 
-/// Command for showing toast messages
+/// Shows a brief, auto-dismissing message using `UIAlertController`.
+///
+/// iOS has no native toast API, so we present a `UIAlertController` without
+/// buttons and dismiss it after a short delay. Not perfect, but consistent
+/// across iOS versions without pulling in a third-party library.
+///
+/// `@unchecked Sendable` because the weak `viewController` ref is only accessed
+/// on `@MainActor`.
 public final class ShowToastCommand: BridgeCommand, @unchecked Sendable {
     public let action = "showToast"
     

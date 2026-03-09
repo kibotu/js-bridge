@@ -4,7 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 
-/** Holds bottom navigation visibility so it can be controlled by bridge commands. */
+/**
+ * Holds bottom navigation visibility as a [StateFlow].
+ *
+ * Singleton because visibility is app-wide shared state -- the same bar is
+ * shown/hidden regardless of which WebView issues the command. The host
+ * Activity collects [isVisible] to drive the bottom bar's actual visibility.
+ */
 object BottomNavigationService {
 
     val isVisible: SharedFlow<Boolean>

@@ -1,7 +1,12 @@
 import Foundation
 import Network
 
-/// Command for network status checks
+/// Reports network connectivity and connection type (wifi, cellular, etc.).
+///
+/// Creates a fresh `NWPathMonitor` per call and cancels it after the first update.
+/// This one-shot approach avoids holding a long-lived monitor when the web side
+/// just needs a snapshot. For continuous monitoring, web can poll or the host app
+/// can push updates via `sendToWeb`.
 public final class NetworkStatusCommand: BridgeCommand {
     public let action = "networkState"
 

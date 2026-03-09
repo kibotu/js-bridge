@@ -1,6 +1,7 @@
 import Foundation
 
-/// Command for loading secure data from Keychain
+/// Retrieves a value from the iOS Keychain. Returns `NSNull` (not an error) when the key
+/// doesn't exist, matching web's `localStorage.getItem()` semantics.
 public final class LoadSecureDataCommand: BridgeCommand {
     public let action = "loadSecureData"
 

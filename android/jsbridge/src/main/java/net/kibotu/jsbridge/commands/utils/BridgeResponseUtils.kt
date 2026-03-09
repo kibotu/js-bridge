@@ -4,7 +4,10 @@ import net.kibotu.jsbridge.commands.BridgeError
 import org.json.JSONObject
 
 /**
- * Utility class for creating standardized bridge command responses.
+ * Builds standardized response envelopes for bridge commands.
+ *
+ * Every response follows the same `{ error: { code, message } }` or empty-object
+ * shape so the JavaScript side can handle errors uniformly.
  */
 object BridgeResponseUtils {
 

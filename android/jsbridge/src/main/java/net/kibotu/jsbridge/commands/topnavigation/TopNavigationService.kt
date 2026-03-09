@@ -5,8 +5,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Simple holder for the current top navigation configuration so it can be
- * updated by bridge commands and observed by UI (e.g., MainActivity).
+ * Holds the current top navigation configuration as a [StateFlow].
+ *
+ * [StateFlow] (not [SharedFlow]) because the config represents state -- there is
+ * always a current value and new collectors should receive it immediately. The host
+ * Activity observes [config] to render the native toolbar accordingly.
  */
 object TopNavigationService {
 

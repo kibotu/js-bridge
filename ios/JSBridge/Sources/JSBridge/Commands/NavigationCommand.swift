@@ -3,7 +3,15 @@ import UIKit
 import WebKit
 import Orchard
 
-/// Handles multiple navigation patterns: back navigation, internal/external URLs.
+/// Handles back navigation, URL navigation, and app exit.
+///
+/// Back navigation tries three strategies in priority order:
+/// 1. WebView history (`webView.goBack()`) -- cheapest, stays in-page
+/// 2. UINavigationController pop -- pops the current VC
+/// 3. Modal dismiss -- dismisses a presented VC
+/// 4. `exit(0)` -- last resort when there's nowhere to go back to
+///
+/// `@unchecked Sendable` because weak UIKit refs are only accessed on `@MainActor`.
 public final class NavigationCommand: BridgeCommand, @unchecked Sendable {
     public let action = "navigation"
     

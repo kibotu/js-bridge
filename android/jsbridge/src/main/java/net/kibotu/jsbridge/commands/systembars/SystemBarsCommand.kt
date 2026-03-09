@@ -11,20 +11,13 @@ import org.json.JSONObject
 import timber.log.Timber
 
 /**
- * Controls Android system UI (status/navigation bars) for immersive experiences.
+ * Controls Android system bars (status bar and navigation bar) for immersive experiences.
  *
- * **Why web needs this:**
- * Web cannot control native system UI bars. Needed for:
- * - Full-screen media viewing (hide bars for immersive video/images)
- * - Games or interactive content requiring maximum screen space
- * - Specific UX flows where native chrome should disappear
+ * Status bar and navigation bar are toggled independently -- some flows need
+ * full-screen content but keep the navigation bar for usability.
  *
- * **Why separate controls:**
- * Status bar (top) and navigation bar (bottom) serve different purposes.
- * Some flows want full-screen but keep navigation for usability.
- *
- * **Why Dispatchers.Main:**
- * Window property modifications must happen on UI thread. Android will crash otherwise.
+ * Delegates to the [Window] extensions in this package, which use
+ * [WindowInsetsControllerCompat] under the hood.
  */
 class SystemBarsCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 

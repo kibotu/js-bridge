@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Configuration for the top navigation bar
+/// Snapshot of top navigation bar appearance, observed by the host app's SwiftUI views.
 public struct TopNavigationConfig: Sendable {
     public var isVisible: Bool = true
     public var title: String? = "Bridge Demo"
@@ -26,7 +26,10 @@ public struct TopNavigationConfig: Sendable {
     }
 }
 
-/// Observable service for top navigation state
+/// Holds the current top navigation config as an `ObservableObject`.
+///
+/// The host app observes `config` to render the native toolbar. Uses `withAnimation`
+/// on updates so bar appearance changes are smooth by default.
 @MainActor
 public final class TopNavigationService: ObservableObject {
     @Published public var config = TopNavigationConfig()
@@ -68,7 +71,9 @@ public final class TopNavigationService: ObservableObject {
     }
 }
 
+/// Adaptive color helpers that resolve differently in light and dark mode.
 extension Color {
+    /// Creates a color that returns `light` or `dark` based on the current `UIUserInterfaceStyle`.
     public init(light: Color, dark: Color) {
         self.init(UIColor { traits in
             traits.userInterfaceStyle == .dark ? UIColor(dark) : UIColor(light)

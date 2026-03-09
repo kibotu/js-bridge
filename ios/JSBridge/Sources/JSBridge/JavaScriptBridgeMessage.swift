@@ -1,6 +1,8 @@
 import Foundation
 
-/// Represents a message exchanged between JavaScript and native code
+/// Wire format for messages exchanged between JavaScript and native code.
+///
+/// Structure: `{ version: Int, id: String, data: { action: String, content?: {...} } }`
 public struct JavaScriptBridgeMessage: Codable, Sendable {
     let version: Int
     let id: String

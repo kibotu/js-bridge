@@ -17,7 +17,12 @@ import android.webkit.WebViewClient
 
 /**
  * Base decorator for [WebViewClient] that delegates every callback to the wrapped [delegate].
- * Subclass and override only the callbacks you care about.
+ *
+ * Android's WebView only allows one WebViewClient at a time. This decorator lets
+ * the bridge layer add behavior (script injection, safe area updates) without
+ * replacing the app's own WebViewClient. Subclass and override only what you need.
+ *
+ * @see BridgeWebViewClient
  */
 open class WebViewClientDecorator(
     protected val delegate: WebViewClient?

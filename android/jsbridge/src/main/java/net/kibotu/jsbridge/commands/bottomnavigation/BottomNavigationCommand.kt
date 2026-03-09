@@ -9,6 +9,12 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
+/**
+ * Toggles the native bottom navigation bar visibility from web content.
+ *
+ * Pushes updated safe area insets after the change so web content can
+ * reclaim (or yield) the space occupied by the bar without a round-trip.
+ */
 class BottomNavigationCommand(
     private val getBridge: () -> net.kibotu.jsbridge.JavaScriptBridge?
 ) : BridgeCommand {

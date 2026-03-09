@@ -1,7 +1,9 @@
 import Foundation
 import Orchard
 
-/// Command for tracking analytics events (fire-and-forget)
+/// Forwards analytics events from web content to the native logging layer (fire-and-forget).
+///
+/// Returns `nil` so no response is sent -- analytics failures should never block user actions.
 public final class TrackEventCommand: BridgeCommand {
     public let action = "trackEvent"
 
@@ -28,6 +30,8 @@ private struct BridgeTrackingEvent: TrackingEvent {
     let parameters: [String: Any]
 }
 
+/// Common shape for analytics events. Adopt in your app's tracking adapter to
+/// forward bridge events to Firebase, Amplitude, or whatever you use.
 public protocol TrackingEvent {
     var name: String { get }
     var parameters: [String: Any] { get }

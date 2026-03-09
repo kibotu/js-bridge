@@ -16,7 +16,10 @@ import android.webkit.WebView
 
 /**
  * Base decorator for [WebChromeClient] that delegates every callback to the wrapped [delegate].
- * Subclass and override only the callbacks you care about.
+ *
+ * Provided as an extension point -- the bridge doesn't use it today, but apps that
+ * need to intercept chrome-level events (file choosers, permission prompts, console
+ * messages) alongside the bridge can subclass this without losing their existing client.
  */
 open class WebChromeClientDecorator(
     protected val delegate: WebChromeClient?

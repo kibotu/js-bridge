@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Configuration for bottom navigation
+/// Snapshot of bottom navigation bar state, observed by the host app's SwiftUI views.
 public struct BottomNavigationConfig: Sendable {
     public var isVisible: Bool = true
 
@@ -9,7 +9,10 @@ public struct BottomNavigationConfig: Sendable {
     }
 }
 
-/// Observable service for bottom navigation state
+/// Holds bottom bar visibility as an `ObservableObject` for SwiftUI integration.
+///
+/// Singleton because bottom bar visibility is app-wide shared state -- the same
+/// bar is shown or hidden regardless of which WebView issues the command.
 @MainActor
 public final class BottomNavigationService: ObservableObject {
     @Published public var config = BottomNavigationConfig()

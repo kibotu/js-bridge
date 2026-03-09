@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-/// Command for copying text to the system clipboard
+/// Copies text to `UIPasteboard.general` for cross-app sharing.
 public final class CopyToClipboardCommand: BridgeCommand {
     public let action = "copyToClipboard"
 

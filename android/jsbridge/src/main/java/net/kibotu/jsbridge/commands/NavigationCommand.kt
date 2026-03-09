@@ -11,7 +11,12 @@ import org.json.JSONObject
 import timber.log.Timber
 
 /**
- * Handles multiple navigation patterns: back navigation, close, internal/external URLs.
+ * Handles multiple navigation patterns: back, close, and URL navigation.
+ *
+ * Back navigation delegates to [AppCompatActivity.onBackPressedDispatcher] so the
+ * host app's back-handling callbacks (e.g., Predictive Back) are respected. Close
+ * simply finishes the Activity. URL navigation is intentionally left as a hook --
+ * routing logic belongs in the host app, not the bridge library.
  */
 class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 

@@ -2,7 +2,11 @@ import Foundation
 import SwiftUI
 import Orchard
 
-/// Service to manage tab navigation across the app
+/// Drives programmatic tab switching from bridge commands.
+///
+/// Separate from `BottomNavigationService` because tab *selection* and
+/// tab bar *visibility* are independent concerns -- you might hide the bar
+/// but still switch tabs programmatically (e.g., deep links).
 @MainActor
 public final class TabNavigationService: ObservableObject {
     @Published public var selectedTab: Int = 0

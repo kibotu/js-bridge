@@ -9,11 +9,12 @@ import net.kibotu.jsbridge.SafeAreaService
 import timber.log.Timber
 
 /**
- * WebViewClient decorator that automatically injects the JavaScript bridge on page start
- * and pushes safe area CSS on page finish.
+ * [WebViewClientDecorator] that wires up the bridge lifecycle automatically.
  *
- * Wraps whatever WebViewClient the WebView already has, preserving its behavior.
- * When multiple bridges are registered, injects scripts for the default bridge.
+ * - **onPageStarted**: Injects `bridge.js` early so the script is available before
+ *   the page's own JavaScript runs. This must happen on every navigation because
+ *   WebView discards injected scripts on page transitions.
+ * - **onPageFinished**: Pushes safe area CSS once the DOM is ready to receive it.
  */
 class BridgeWebViewClient(delegate: WebViewClient?) : WebViewClientDecorator(delegate) {
 

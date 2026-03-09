@@ -1,7 +1,15 @@
 import Foundation
 import Security
 
-/// Helper class for Keychain operations
+/// Thin wrapper around the Security framework's Keychain Services API.
+///
+/// Uses `kSecAttrAccessibleWhenUnlocked` so data is only readable while the
+/// device is unlocked -- a reasonable trade-off between security and availability
+/// for tokens and user preferences.
+///
+/// `save` deletes before inserting because `SecItemAdd` fails with
+/// `errSecDuplicateItem` if the key already exists. An upsert (delete + add)
+/// is the idiomatic Keychain pattern for overwriting values.
 public final class KeychainHelper: Sendable {
     static func save(key: String, value: String) -> Bool {
         guard let data = value.data(using: .utf8) else { return false }
