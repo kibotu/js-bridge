@@ -1,5 +1,7 @@
 # JSBridge for iOS
 
+[![iOS CI](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml)
+
 A Swift package that gives your WKWebView a promise-based JavaScript bridge. Web content calls native with `await jsbridge.call(...)`, native pushes events back with `bridge.sendToWeb(...)`. One API, no ceremony.
 
 ## Requirements
