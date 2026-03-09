@@ -3,17 +3,15 @@ import UIKit
 
 /// Presents a native `UIAlertController` so web content can show platform-consistent dialogs.
 ///
-/// `@unchecked Sendable` because the weak `viewController` ref is only accessed
+/// `@unchecked Sendable` because the weak `bridge` ref is only accessed
 /// on `@MainActor`.
-public final class ShowAlertCommand: BridgeCommand, @unchecked Sendable {
+public final class ShowAlertCommand: BridgeCommand, BridgeAware, @unchecked Sendable {
     public let action = "showAlert"
-    
-    weak var viewController: UIViewController?
-    
-    public init(viewController: UIViewController?) {
-        self.viewController = viewController
-    }
-    
+
+    public weak var bridge: JavaScriptBridge?
+
+    public init() {}
+
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
         guard let title = content?["title"] as? String,
@@ -31,7 +29,7 @@ public final class ShowAlertCommand: BridgeCommand, @unchecked Sendable {
             alert.addAction(UIAlertAction(title: "OK", style: .default))
         }
         
-        viewController?.present(alert, animated: true)
+        bridge?.viewController?.present(alert, animated: true)
         return nil
     }
 }

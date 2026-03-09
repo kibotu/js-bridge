@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import org.json.JSONObject
 
 /**
@@ -21,12 +22,14 @@ import org.json.JSONObject
  * Future extensibility for network type (wifi/cellular/ethernet) to enable
  * bandwidth-aware UX decisions.
  */
-class NetworkStatusCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class NetworkStatusCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "networkState"
 
     override suspend fun handle(content: Any?): JSONObject {
-        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        val context = BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         val connectivityManager =
             context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

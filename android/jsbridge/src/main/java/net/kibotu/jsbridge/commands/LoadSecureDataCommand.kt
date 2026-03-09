@@ -1,9 +1,9 @@
 package net.kibotu.jsbridge.commands
 
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -32,10 +32,12 @@ import timber.log.Timber
  * Only web code from your domain should access this bridge. WebView's
  * origin-based security model prevents unauthorized access.
  */
-class LoadSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class LoadSecureDataCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     private val secureStorage by lazy {
-        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        val context = BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         SecureStorage(requireNotNull(context))
     }
 

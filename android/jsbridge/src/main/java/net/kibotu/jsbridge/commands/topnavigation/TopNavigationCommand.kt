@@ -2,7 +2,9 @@ package net.kibotu.jsbridge.commands.topnavigation
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SafeAreaService
+import net.kibotu.jsbridge.commands.BridgeAware
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -15,13 +17,10 @@ import timber.log.Timber
  * After applying the config, pushes updated safe area insets to the WebView so
  * web content can adjust its layout immediately (e.g., when the bar is hidden,
  * content should extend behind the status bar).
- *
- * @param getBridge Lazy bridge reference -- nullable because the bridge may not
- *   be fully initialized when this command is constructed via [DefaultCommands].
  */
-class TopNavigationCommand(
-    private val getBridge: () -> net.kibotu.jsbridge.JavaScriptBridge?
-) : BridgeCommand {
+class TopNavigationCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "topNavigation"
 
@@ -49,7 +48,7 @@ class TopNavigationCommand(
                 )
             )
 
-            SafeAreaService.pushTobridge(getBridge())
+            SafeAreaService.pushTobridge(bridge)
 
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {

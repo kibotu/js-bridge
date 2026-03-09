@@ -6,20 +6,18 @@ import UIKit
 /// Falls back from the view controller's window scene to the first connected scene
 /// to handle edge cases where the VC's window is not yet in the hierarchy.
 ///
-/// `@unchecked Sendable` because the weak `viewController` ref is only accessed
+/// `@unchecked Sendable` because the weak `bridge` ref is only accessed
 /// on `@MainActor`.
-public final class GetInsetsCommand: BridgeCommand, @unchecked Sendable {
+public final class GetInsetsCommand: BridgeCommand, BridgeAware, @unchecked Sendable {
     public let action = "insets"
 
-    weak var viewController: UIViewController?
+    public weak var bridge: JavaScriptBridge?
 
-    public init(viewController: UIViewController?) {
-        self.viewController = viewController
-    }
+    public init() {}
 
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
-        guard let vc = viewController else {
+        guard let vc = bridge?.viewController else {
             throw BridgeError.internalError("No view controller")
         }
 

@@ -1,8 +1,8 @@
 package net.kibotu.jsbridge.commands
 
-import android.content.Context
 import android.os.Build
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import org.json.JSONObject
 
 /**
@@ -21,13 +21,15 @@ import org.json.JSONObject
  * - Manufacturer/Model: Known device-specific bugs/limitations
  * - App version: Backend compatibility and feature flags
  */
-class DeviceInfoCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class DeviceInfoCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "deviceInfo"
 
     override suspend fun handle(content: Any?): Any? {
         val context = requireNotNull(
-            BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+            BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         )
         return JSONObject().apply {
             put("platform", "Android")

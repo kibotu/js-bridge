@@ -7,17 +7,15 @@ import UIKit
 /// buttons and dismiss it after a short delay. Not perfect, but consistent
 /// across iOS versions without pulling in a third-party library.
 ///
-/// `@unchecked Sendable` because the weak `viewController` ref is only accessed
+/// `@unchecked Sendable` because the weak `bridge` ref is only accessed
 /// on `@MainActor`.
-public final class ShowToastCommand: BridgeCommand, @unchecked Sendable {
+public final class ShowToastCommand: BridgeCommand, BridgeAware, @unchecked Sendable {
     public let action = "showToast"
-    
-    weak var viewController: UIViewController?
-    
-    public init(viewController: UIViewController?) {
-        self.viewController = viewController
-    }
-    
+
+    public weak var bridge: JavaScriptBridge?
+
+    public init() {}
+
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
         guard let message = content?["message"] as? String else {
@@ -25,7 +23,7 @@ public final class ShowToastCommand: BridgeCommand, @unchecked Sendable {
         }
         
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        viewController?.present(alert, animated: true)
+        bridge?.viewController?.present(alert, animated: true)
         
         let duration = (content?["duration"] as? String) == "long" ? 3.5 : 2.0
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {

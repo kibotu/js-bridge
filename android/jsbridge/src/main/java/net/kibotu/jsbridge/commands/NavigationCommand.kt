@@ -1,10 +1,10 @@
 package net.kibotu.jsbridge.commands
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import org.json.JSONObject
@@ -18,7 +18,9 @@ import timber.log.Timber
  * simply finishes the Activity. URL navigation is intentionally left as a hook --
  * routing logic belongs in the host app, not the bridge library.
  */
-class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class NavigationCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "navigation"
 
@@ -34,7 +36,7 @@ class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCom
             when {
                 goBack == true -> {
                     val activity =
-                        BridgeContextProvider.findActivity(contextProvider()) as? AppCompatActivity
+                        BridgeContextProvider.findActivity(bridge?.context) as? AppCompatActivity
                     if (activity == null) {
                         return@withContext BridgeResponseUtils.createErrorResponse(
                             "NO_ACTIVITY",
@@ -45,7 +47,7 @@ class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCom
                 }
 
                 close == true -> {
-                    val activity = BridgeContextProvider.findActivity(contextProvider())
+                    val activity = BridgeContextProvider.findActivity(bridge?.context)
                     if (activity == null) {
                         return@withContext BridgeResponseUtils.createErrorResponse(
                             "NO_ACTIVITY",

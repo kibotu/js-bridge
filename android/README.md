@@ -1,8 +1,8 @@
 # JSBridge for Android
 
-[![Android CI](https://github.com/kibotu/js-bridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/android.yml)
+[![Android CI](https://github.com/kibotu/jsbridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/android.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/net.kibotu/jsbridge)](https://central.sonatype.com/artifact/net.kibotu/jsbridge)
-[![JitPack](https://jitpack.io/v/kibotu/js-bridge.svg)](https://jitpack.io/#kibotu/js-bridge)
+[![JitPack](https://jitpack.io/v/kibotu/jsbridge.svg)](https://jitpack.io/#kibotu/jsbridge)
 
 A Kotlin library that gives your WebView a promise-based JavaScript bridge. Web content calls native with `await jsbridge.call(...)`, native pushes events back with `bridge.sendToWeb(...)`. One API, no ceremony.
 
@@ -38,7 +38,7 @@ Then add the dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.github.kibotu:js-bridge:<version>")
+    implementation("com.github.kibotu:jsbridge:<version>")
 }
 ```
 
@@ -59,12 +59,10 @@ dependencies {
 ## Quick Start
 
 ```kotlin
-var bridgeRef: JavaScriptBridge? = null
 val bridge = JavaScriptBridge.inject(
     webView = webView,
-    commands = DefaultCommands.all(getBridge = { bridgeRef })
+    commands = DefaultCommands.all()
 )
-bridgeRef = bridge
 ```
 
 That's the whole setup. Your web content can now call native:
@@ -81,12 +79,10 @@ Use all defaults, or only what you need:
 
 ```kotlin
 // Everything
-var bridgeRef: JavaScriptBridge? = null
 val bridge = JavaScriptBridge.inject(
     webView = webView,
-    commands = DefaultCommands.all(getBridge = { bridgeRef })
+    commands = DefaultCommands.all()
 )
-bridgeRef = bridge
 
 // Just the essentials
 val bridge = JavaScriptBridge.inject(
@@ -99,7 +95,7 @@ val bridge = JavaScriptBridge.inject(
 )
 ```
 
-The `getBridge` lambda is needed by commands that push safe-area updates back to the WebView (e.g. `TopNavigationCommand`). If you don't use those, you can skip it.
+Commands that need the bridge (for safe-area updates, context access, etc.) implement `BridgeAware` and are wired automatically by `inject()`.
 
 ### Send Events to Web
 
@@ -166,7 +162,7 @@ Register it:
 ```kotlin
 val bridge = JavaScriptBridge.inject(
     webView = webView,
-    commands = DefaultCommands.all(getBridge = { bridge }) + MyCommand()
+    commands = DefaultCommands.all() + MyCommand()
 )
 ```
 
@@ -248,12 +244,10 @@ fun WebViewScreen(url: String, onBridgeReady: (JavaScriptBridge) -> Unit) {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
 
-                var bridgeRef: JavaScriptBridge? = null
                 val bridge = JavaScriptBridge.inject(
                     webView = this,
-                    commands = DefaultCommands.all(getBridge = { bridgeRef })
+                    commands = DefaultCommands.all()
                 )
-                bridgeRef = bridge
                 bridgeState.value = bridge
                 onBridgeReady(bridge)
                 loadUrl(url)

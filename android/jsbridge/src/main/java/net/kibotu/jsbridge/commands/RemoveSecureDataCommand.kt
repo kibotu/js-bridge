@@ -1,9 +1,9 @@
 package net.kibotu.jsbridge.commands
 
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -32,10 +32,12 @@ import timber.log.Timber
  * - Privacy compliance: user requests data deletion
  * - Session management: clear expired/invalid tokens
  */
-class RemoveSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class RemoveSecureDataCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     private val secureStorage by lazy {
-        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        val context = BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         SecureStorage(requireNotNull(context))
     }
 

@@ -1,8 +1,8 @@
 # jsbridge
 
-[![Android CI](https://github.com/kibotu/js-bridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/android.yml)
-[![iOS CI](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml) [![Maven Central Version](https://img.shields.io/maven-central/v/net.kibotu/js-bridge)](https://central.sonatype.com/artifact/net.kibotu/js-bridge)
- [![](https://jitpack.io/v/kibotu/js-bridge.svg)](https://jitpack.io/#kibotu/js-bridge)
+[![Android CI](https://github.com/kibotu/jsbridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/android.yml)
+[![iOS CI](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml) [![Maven Central Version](https://img.shields.io/maven-central/v/net.kibotu/jsbridge)](https://central.sonatype.com/artifact/net.kibotu/jsbridge)
+ [![](https://jitpack.io/v/kibotu/jsbridge.svg)](https://jitpack.io/#kibotu/jsbridge)
 
 
 A unified, promise-based JavaScript bridge for bidirectional communication between web content and native mobile apps. `window.jsbridge` works identically on Android and iOS. Life's too short for platform `if` statements.
@@ -537,12 +537,10 @@ Wire it up with explicit command configuration:
 
 ```kotlin
 // All default commands
-var bridgeRef: JavaScriptBridge? = null
 val bridge = JavaScriptBridge.inject(
     webView = webView,
-    commands = DefaultCommands.all(getBridge = { bridgeRef })
+    commands = DefaultCommands.all()
 )
-bridgeRef = bridge
 
 // Or pick only the commands you need
 val bridge = JavaScriptBridge.inject(
@@ -576,7 +574,7 @@ import JSBridge
 let bridge = JavaScriptBridge(
     webView: webView,
     viewController: self,
-    commands: DefaultCommands.all(viewController: self, webView: webView)
+    commands: DefaultCommands.all()
 )
 
 // Or pick only the commands you need
@@ -585,7 +583,7 @@ let bridge = JavaScriptBridge(
     viewController: self,
     commands: [
         DeviceInfoCommand(),
-        ShowToastCommand(viewController: self),
+        ShowToastCommand(),
         HapticCommand(),
     ]
 )
@@ -655,7 +653,7 @@ class MyCommand: BridgeCommand {
 // Android
 val bridge = JavaScriptBridge.inject(
     webView = webView,
-    commands = DefaultCommands.all(getBridge = { bridge }) + MyCommand()
+    commands = DefaultCommands.all() + MyCommand()
 )
 ```
 
@@ -663,7 +661,7 @@ val bridge = JavaScriptBridge.inject(
 // iOS
 let bridge = JavaScriptBridge(
     webView: webView, viewController: self,
-    commands: DefaultCommands.all(viewController: self, webView: webView) + [MyCommand()]
+    commands: DefaultCommands.all() + [MyCommand()]
 )
 ```
 
@@ -715,7 +713,7 @@ val analyticsBridge = JavaScriptBridge.inject(
 // iOS
 let mainBridge = JavaScriptBridge(
     webView: webView, viewController: self, bridgeName: "jsbridge",
-    commands: [DeviceInfoCommand(), ShowToastCommand(viewController: self)]
+    commands: [DeviceInfoCommand(), ShowToastCommand(), HapticCommand()]
 )
 let analyticsBridge = JavaScriptBridge(
     webView: webView, viewController: self, bridgeName: "analytics",
@@ -745,7 +743,7 @@ val bridge = JavaScriptBridge.inject(
 let bridge = JavaScriptBridge(
     webView: webView, viewController: self,
     bridgeName: "myApp",
-    commands: DefaultCommands.all(viewController: self, webView: webView)
+    commands: DefaultCommands.all()
 )
 ```
 

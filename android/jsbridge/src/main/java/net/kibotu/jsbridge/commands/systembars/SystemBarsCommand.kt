@@ -1,9 +1,10 @@
 package net.kibotu.jsbridge.commands.systembars
 
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
+import net.kibotu.jsbridge.commands.BridgeAware
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -19,7 +20,9 @@ import timber.log.Timber
  * Delegates to the [Window] extensions in this package, which use
  * [WindowInsetsControllerCompat] under the hood.
  */
-class SystemBarsCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class SystemBarsCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "systemBars"
 
@@ -31,7 +34,7 @@ class SystemBarsCommand(private val contextProvider: () -> Context?) : BridgeCom
 
             Timber.i("[handle] showStatusBar=$showStatusBar showSystemNavigation=$showSystemNavigation")
 
-            val activity = BridgeContextProvider.findActivity(contextProvider())
+            val activity = BridgeContextProvider.findActivity(bridge?.context)
                 ?: return@withContext BridgeResponseUtils.createErrorResponse(
                     "NO_ACTIVITY",
                     "No active activity"

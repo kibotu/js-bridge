@@ -1,6 +1,6 @@
 # JSBridge for iOS
 
-[![iOS CI](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml)
+[![iOS CI](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml)
 
 A Swift package that gives your WKWebView a promise-based JavaScript bridge. Web content calls native with `await jsbridge.call(...)`, native pushes events back with `bridge.sendToWeb(...)`. One API, no ceremony.
 
@@ -15,13 +15,13 @@ A Swift package that gives your WKWebView a promise-based JavaScript bridge. Web
 ### Swift Package Manager (remote)
 
 ```swift
-.package(url: "https://github.com/kibotu/js-bridge", from: "1.0.0")
+.package(url: "https://github.com/kibotu/jsbridge", from: "1.0.0")
 ```
 
 Then add the product to your target:
 
 ```swift
-.product(name: "JSBridge", package: "js-bridge")
+.product(name: "JSBridge", package: "jsbridge")
 ```
 
 ### Swift Package Manager (local)
@@ -29,12 +29,12 @@ Then add the product to your target:
 If you've cloned the repo:
 
 ```swift
-.package(path: "../path/to/js-bridge")
+.package(path: "../path/to/jsbridge")
 ```
 
 ### Xcode
 
-File → Add Package Dependencies → paste `https://github.com/kibotu/js-bridge` → Add Package.
+File → Add Package Dependencies → paste `https://github.com/kibotu/jsbridge` → Add Package.
 
 ## Quick Start
 
@@ -44,7 +44,7 @@ import JSBridge
 let bridge = JavaScriptBridge(
     webView: webView,
     viewController: self,
-    commands: DefaultCommands.all(viewController: self, webView: webView)
+    commands: DefaultCommands.all()
 )
 ```
 
@@ -65,7 +65,7 @@ Use all defaults, or only what you need:
 let bridge = JavaScriptBridge(
     webView: webView,
     viewController: self,
-    commands: DefaultCommands.all(viewController: self, webView: webView)
+    commands: DefaultCommands.all()
 )
 
 // Just the essentials
@@ -74,7 +74,7 @@ let bridge = JavaScriptBridge(
     viewController: self,
     commands: [
         DeviceInfoCommand(),
-        ShowToastCommand(viewController: self),
+        ShowToastCommand(),
         HapticCommand(),
     ]
 )
@@ -95,7 +95,7 @@ let bridge = JavaScriptBridge(
     webView: webView,
     viewController: self,
     bridgeName: "myApp",
-    commands: DefaultCommands.all(viewController: self, webView: webView)
+    commands: DefaultCommands.all()
 )
 ```
 
@@ -108,7 +108,7 @@ Register separate bridges on the same WebView for different concerns:
 ```swift
 let mainBridge = JavaScriptBridge(
     webView: webView, viewController: self, bridgeName: "jsbridge",
-    commands: [DeviceInfoCommand(), ShowToastCommand(viewController: self)]
+    commands: [DeviceInfoCommand(), ShowToastCommand(), HapticCommand()]
 )
 let analyticsBridge = JavaScriptBridge(
     webView: webView, viewController: self, bridgeName: "analytics",
@@ -137,7 +137,7 @@ Register it:
 let bridge = JavaScriptBridge(
     webView: webView,
     viewController: self,
-    commands: DefaultCommands.all(viewController: self, webView: webView) + [MyCommand()]
+    commands: DefaultCommands.all() + [MyCommand()]
 )
 ```
 

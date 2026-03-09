@@ -32,15 +32,15 @@ private final class LeakAvoider: NSObject, WKScriptMessageHandler {
 /// - The global callback names (`window.__<name>_handleResponse`, etc.)
 ///
 /// Commands are passed in at init time -- they are **not** auto-registered.
-/// Use `DefaultCommands.all(...)` for a convenient all-in-one setup.
+/// Use `DefaultCommands.all()` for a convenient all-in-one setup.
 ///
 /// Multiple bridges can coexist on the same WKWebView as long as they
 /// use different names.
 @MainActor
 public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
     private var commands: [any BridgeCommand] = []
-    private weak var webView: WKWebView?
-    private weak var viewController: UIViewController?
+    public private(set) weak var webView: WKWebView?
+    public private(set) weak var viewController: UIViewController?
     private var bridgeScriptInjected = false
 
     public let name: String
@@ -53,6 +53,9 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
     public static let defaultBridgeName = "jsbridge"
 
     /// Creates and configures the bridge.
+    ///
+    /// Commands implementing ``BridgeAware`` receive the bridge reference
+    /// automatically -- no manual wiring needed.
     ///
     /// - Parameters:
     ///   - webView: The WKWebView to bridge with.
@@ -72,6 +75,9 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
 
         for command in commands {
             register(command: command)
+            if let aware = command as? BridgeAware {
+                aware.bridge = self
+            }
         }
 
         setupMessageHandler()

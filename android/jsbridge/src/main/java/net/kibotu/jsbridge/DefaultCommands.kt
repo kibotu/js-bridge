@@ -1,6 +1,5 @@
 package net.kibotu.jsbridge
 
-import android.content.Context
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.CopyToClipboardCommand
 import net.kibotu.jsbridge.commands.DeviceInfoCommand
@@ -32,43 +31,36 @@ import net.kibotu.jsbridge.commands.tracking.TrackScreenCommand
  * ```kotlin
  * val bridge = JavaScriptBridge.inject(
  *     webView = webView,
- *     commands = DefaultCommands.all(getBridge = { bridge })
+ *     commands = DefaultCommands.all()
  * )
  * ```
+ *
+ * Commands that need the bridge (or its context) implement [BridgeAware]
+ * and are wired automatically by [JavaScriptBridge.inject].
  */
 object DefaultCommands {
 
-    /**
-     * Returns all built-in commands.
-     *
-     * @param getBridge Lazy accessor for the bridge instance, required by
-     *   commands that push safe-area updates back to the WebView
-     *   (e.g. TopNavigationCommand, BottomNavigationCommand).
-     *   Also used to derive the [Context] for commands that need it.
-     */
-    fun all(getBridge: () -> JavaScriptBridge? = { null }): List<BridgeCommand> {
-        val contextProvider: () -> Context? = { getBridge()?.context }
-        return listOf(
-            DeviceInfoCommand(contextProvider),
-            NetworkStatusCommand(contextProvider),
-            SystemBarsCommand(contextProvider),
-            GetInsetsCommand(contextProvider),
-            HapticCommand(contextProvider),
-            RequestPermissionsCommand(),
-            OpenSettingsCommand(contextProvider),
-            CopyToClipboardCommand(contextProvider),
-            NavigationCommand(contextProvider),
-            TopNavigationCommand(getBridge),
-            BottomNavigationCommand(getBridge),
-            ShowToastCommand(contextProvider),
-            ShowAlertCommand(contextProvider),
-            SaveSecureDataCommand(contextProvider),
-            LoadSecureDataCommand(contextProvider),
-            RemoveSecureDataCommand(contextProvider),
-            ThemeChangedCommand(),
-            TrackEventCommand(),
-            TrackScreenCommand(),
-            RefreshCommand()
-        )
-    }
+    /** Returns all built-in commands. */
+    fun all(): List<BridgeCommand> = listOf(
+        DeviceInfoCommand(),
+        NetworkStatusCommand(),
+        SystemBarsCommand(),
+        GetInsetsCommand(),
+        HapticCommand(),
+        RequestPermissionsCommand(),
+        OpenSettingsCommand(),
+        CopyToClipboardCommand(),
+        NavigationCommand(),
+        TopNavigationCommand(),
+        BottomNavigationCommand(),
+        ShowToastCommand(),
+        ShowAlertCommand(),
+        SaveSecureDataCommand(),
+        LoadSecureDataCommand(),
+        RemoveSecureDataCommand(),
+        ThemeChangedCommand(),
+        TrackEventCommand(),
+        TrackScreenCommand(),
+        RefreshCommand()
+    )
 }

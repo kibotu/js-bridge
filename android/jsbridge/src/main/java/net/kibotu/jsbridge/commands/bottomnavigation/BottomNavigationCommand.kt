@@ -2,7 +2,9 @@ package net.kibotu.jsbridge.commands.bottomnavigation
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SafeAreaService
+import net.kibotu.jsbridge.commands.BridgeAware
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -15,9 +17,9 @@ import timber.log.Timber
  * Pushes updated safe area insets after the change so web content can
  * reclaim (or yield) the space occupied by the bar without a round-trip.
  */
-class BottomNavigationCommand(
-    private val getBridge: () -> net.kibotu.jsbridge.JavaScriptBridge?
-) : BridgeCommand {
+class BottomNavigationCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "bottomNavigation"
 
@@ -29,7 +31,7 @@ class BottomNavigationCommand(
 
             BottomNavigationService.setVisible(isVisible == true)
 
-            SafeAreaService.pushTobridge(getBridge())
+            SafeAreaService.pushTobridge(bridge)
 
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {

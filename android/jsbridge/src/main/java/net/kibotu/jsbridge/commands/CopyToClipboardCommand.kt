@@ -6,6 +6,7 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import org.json.JSONObject
@@ -29,7 +30,9 @@ import timber.log.Timber
  * Sharing codes, URLs, account numbers, addresses - anything user needs to
  * paste elsewhere.
  */
-class CopyToClipboardCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class CopyToClipboardCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "copyToClipboard"
 
@@ -43,7 +46,7 @@ class CopyToClipboardCommand(private val contextProvider: () -> Context?) : Brid
         }
 
         val context = requireNotNull(
-            BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+            BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         )
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
 

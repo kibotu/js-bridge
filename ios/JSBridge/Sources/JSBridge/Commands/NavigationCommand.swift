@@ -12,17 +12,13 @@ import Orchard
 /// 4. `exit(0)` -- last resort when there's nowhere to go back to
 ///
 /// `@unchecked Sendable` because weak UIKit refs are only accessed on `@MainActor`.
-public final class NavigationCommand: BridgeCommand, @unchecked Sendable {
+public final class NavigationCommand: BridgeCommand, BridgeAware, @unchecked Sendable {
     public let action = "navigation"
-    
-    weak var viewController: UIViewController?
-    weak var webView: WKWebView?
-    
-    public init(viewController: UIViewController?, webView: WKWebView? = nil) {
-        self.viewController = viewController
-        self.webView = webView
-    }
-    
+
+    public weak var bridge: JavaScriptBridge?
+
+    public init() {}
+
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
         let urlString = content?["url"] as? String ?? ""
@@ -32,20 +28,20 @@ public final class NavigationCommand: BridgeCommand, @unchecked Sendable {
         Orchard.v("[NavigationCommand] url=\(urlString) external=\(isExternal) goBack=\(goBack)")
         
         if goBack {
-            if let webView = webView, webView.canGoBack {
+            if let webView = bridge?.webView, webView.canGoBack {
                 webView.goBack()
                 Orchard.v("[NavigationCommand] Navigated back in WebView history")
                 return nil
             }
             
-            if let navigationController = viewController?.navigationController,
+            if let navigationController = bridge?.viewController?.navigationController,
                navigationController.viewControllers.count > 1 {
                 navigationController.popViewController(animated: true)
                 Orchard.v("[NavigationCommand] Popped navigation controller")
                 return nil
             }
             
-            if let viewController = viewController,
+            if let viewController = bridge?.viewController,
                viewController.presentingViewController != nil {
                 await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
                     viewController.dismiss(animated: true) {

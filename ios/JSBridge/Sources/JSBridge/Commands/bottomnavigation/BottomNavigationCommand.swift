@@ -8,14 +8,12 @@ import Foundation
 /// `@unchecked Sendable` because the weak `bridge` ref can't satisfy
 /// the compiler's strict sendability check, but it's safe -- we only
 /// access it on `@MainActor`.
-public final class BottomNavigationCommand: BridgeCommand, @unchecked Sendable {
+public final class BottomNavigationCommand: BridgeCommand, BridgeAware, @unchecked Sendable {
     public let action = "bottomNavigation"
 
-    weak var bridge: JavaScriptBridge?
+    public weak var bridge: JavaScriptBridge?
 
-    public init(bridge: JavaScriptBridge? = nil) {
-        self.bridge = bridge
-    }
+    public init() {}
 
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {

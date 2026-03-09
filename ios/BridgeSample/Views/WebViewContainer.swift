@@ -72,10 +72,7 @@ class WebViewController: UIViewController, WKNavigationDelegate, WindowFocusObse
         let jsBridge = JavaScriptBridge(
             webView: webView,
             viewController: self,
-            commands: DefaultCommands.all(
-                viewController: self,
-                webView: webView
-            )
+            commands: DefaultCommands.all()
         )
         bridge = jsBridge
         onBridgeReady?(jsBridge)

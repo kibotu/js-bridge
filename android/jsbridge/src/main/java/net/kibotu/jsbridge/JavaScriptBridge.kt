@@ -11,6 +11,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.kibotu.jsbridge.JavaScriptBridge.Companion.DEFAULT_BRIDGE_NAME
 import net.kibotu.jsbridge.JavaScriptBridge.Companion.bridge
+import net.kibotu.jsbridge.commands.BridgeAware
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.BridgeError
 import net.kibotu.jsbridge.decorators.BridgeWebViewClient
@@ -64,11 +65,13 @@ class JavaScriptBridge(
          *   (decorator pattern) so bridge injection and safe area CSS happen automatically
          * - Associates the bridge with the WebView for retrieval via [bridge]
          *
+         * Commands implementing [BridgeAware] receive the bridge reference
+         * automatically -- no manual wiring needed.
+         *
          * ```kotlin
          * val bridge = JavaScriptBridge.inject(
          *     webView = webView,
-         *     commands = listOf(DeviceInfoCommand(), ShowToastCommand()),
-         *     bridgeName = "jsbridge"
+         *     commands = DefaultCommands.all()
          * )
          * ```
          *
@@ -80,6 +83,7 @@ class JavaScriptBridge(
             bridgeName: String = DEFAULT_BRIDGE_NAME
         ): JavaScriptBridge {
             val bridge = JavaScriptBridge(webView, commands, bridgeName)
+            commands.filterIsInstance<BridgeAware>().forEach { it.bridge = bridge }
             webView.addJavascriptInterface(bridge, bridgeName)
 
             val map = bridges.getOrPut(webView) { mutableMapOf() }

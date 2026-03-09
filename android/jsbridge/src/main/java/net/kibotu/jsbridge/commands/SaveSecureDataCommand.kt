@@ -1,9 +1,9 @@
 package net.kibotu.jsbridge.commands
 
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
@@ -35,10 +35,12 @@ import timber.log.Timber
  * Simple, familiar pattern (like localStorage API). Web developers understand
  * key-value storage immediately, reducing learning curve.
  */
-class SaveSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class SaveSecureDataCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     private val secureStorage by lazy {
-        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        val context = BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         SecureStorage(requireNotNull(context))
     }
 

@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import org.json.JSONObject
@@ -35,7 +36,9 @@ import timber.log.Timber
  * [Settings.System.HARDWARE_HAPTIC_FEEDBACK_INTENSITY], which the Settings app
  * keeps at the device default even when the user disables touch haptics.
  */
-class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+class HapticCommand : BridgeCommand, BridgeAware {
+
+    override var bridge: JavaScriptBridge? = null
 
     override val action = "haptic"
 
@@ -51,7 +54,7 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                 }
 
                 val context = requireNotNull(
-                    BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+                    BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
                 )
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

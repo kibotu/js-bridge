@@ -38,12 +38,10 @@ fun WebViewScreen(
                 settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                 webChromeClient = WebChromeClient()
 
-                var bridgeRef: JavaScriptBridge? = null
                 val bridge = JavaScriptBridge.inject(
                     webView = this,
-                    commands = DefaultCommands.all(getBridge = { bridgeRef })
+                    commands = DefaultCommands.all()
                 )
-                bridgeRef = bridge
                 bridgeState.value = bridge
                 onBridgeReady(bridge)
                 loadUrl(url)
