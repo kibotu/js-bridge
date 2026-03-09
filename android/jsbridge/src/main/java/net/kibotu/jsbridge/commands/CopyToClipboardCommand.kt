@@ -3,11 +3,11 @@ package net.kibotu.jsbridge.commands
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -42,7 +42,9 @@ class CopyToClipboardCommand(private val contextProvider: () -> Context?) : Brid
             )
         }
 
-        val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
+        val context = requireNotNull(
+            BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        )
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
 
         try {

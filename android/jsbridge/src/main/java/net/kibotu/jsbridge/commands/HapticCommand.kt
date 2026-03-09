@@ -8,11 +8,11 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.HapticFeedbackConstants
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -44,7 +44,9 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                     return@withContext BridgeResponseUtils.createSuccessResponse()
                 }
 
-                val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
+                val context = requireNotNull(
+                    BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+                )
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     performHapticViaVibrator(context)
@@ -101,7 +103,7 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
             view.performHapticFeedback(
                 constant,
                 HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
-                    or HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                        or HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
             )
             return
         }
@@ -129,7 +131,8 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
 
     private fun getVibrator(context: Context): Vibrator? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            val manager =
+                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
             manager?.defaultVibrator
         } else {
             @Suppress("DEPRECATION")

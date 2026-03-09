@@ -14,7 +14,8 @@ object BridgeResponseUtils {
     /**
      * Creates a standardized error response from a [BridgeError].
      */
-    fun createErrorResponse(error: BridgeError): JSONObject = createErrorResponse(error.code, error.message)
+    fun createErrorResponse(error: BridgeError): JSONObject =
+        createErrorResponse(error.code, error.message)
 
     /**
      * Creates a standardized error response from raw code/message strings.

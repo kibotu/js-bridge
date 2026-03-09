@@ -1,11 +1,11 @@
 package net.kibotu.jsbridge.commands.topnavigation
 
-import net.kibotu.jsbridge.SafeAreaService
-import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
-import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kibotu.jsbridge.SafeAreaService
+import net.kibotu.jsbridge.commands.BridgeCommand
+import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
+import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import org.json.JSONObject
 import timber.log.Timber
 

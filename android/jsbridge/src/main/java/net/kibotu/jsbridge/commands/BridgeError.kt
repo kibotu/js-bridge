@@ -10,8 +10,15 @@ package net.kibotu.jsbridge.commands
  */
 sealed class BridgeError(val code: String, val message: String) {
     object InvalidMessage : BridgeError("INVALID_MESSAGE", "Invalid message format")
-    data class UnknownAction(val action: String) : BridgeError("UNKNOWN_ACTION", "Unknown action: $action")
-    data class InvalidParameter(val param: String) : BridgeError("INVALID_PARAMETER", "Invalid or missing parameter: $param")
-    data class InternalError(val msg: String) : BridgeError("INTERNAL_ERROR", "Internal error: $msg")
-    data class UnsupportedVersion(val version: Int) : BridgeError("UNSUPPORTED_VERSION", "Unsupported schema version: $version")
+    data class UnknownAction(val action: String) :
+        BridgeError("UNKNOWN_ACTION", "Unknown action: $action")
+
+    data class InvalidParameter(val param: String) :
+        BridgeError("INVALID_PARAMETER", "Invalid or missing parameter: $param")
+
+    data class InternalError(val msg: String) :
+        BridgeError("INTERNAL_ERROR", "Internal error: $msg")
+
+    data class UnsupportedVersion(val version: Int) :
+        BridgeError("UNSUPPORTED_VERSION", "Unsupported schema version: $version")
 }

@@ -3,6 +3,7 @@ package net.kibotu.jsbridge.commands.topnavigation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import net.kibotu.jsbridge.commands.topnavigation.TopNavigationService.config
 
 /**
  * Holds the current top navigation configuration as a [StateFlow].

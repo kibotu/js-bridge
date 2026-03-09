@@ -27,7 +27,8 @@ class NetworkStatusCommand(private val contextProvider: () -> Context?) : Bridge
 
     override suspend fun handle(content: Any?): JSONObject {
         val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
-        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         var isConnected = false
         var connectionType = "none"

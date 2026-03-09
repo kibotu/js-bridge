@@ -2,6 +2,7 @@ package net.kibotu.jsbridge.commands.bottomnavigation
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import net.kibotu.jsbridge.commands.bottomnavigation.BottomNavigationService.isVisible
 
 
 /**

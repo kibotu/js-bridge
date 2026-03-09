@@ -39,8 +39,8 @@ class SecureStorage(context: Context) {
             }
             error(
                 "No encryption backend available. " +
-                    "Add com.google.crypto.tink:tink-android or " +
-                    "androidx.security:security-crypto to your dependencies."
+                        "Add com.google.crypto.tink:tink-android or " +
+                        "androidx.security:security-crypto to your dependencies."
             )
         }
 
@@ -90,8 +90,14 @@ internal class TinkSecureStorageBackend(context: Context) : SecureStorageBackend
     }
 
     override fun save(key: String, value: String) {
-        val encrypted = aead.encrypt(value.toByteArray(Charsets.UTF_8), key.toByteArray(Charsets.UTF_8))
-        prefs.edit { putString(key, android.util.Base64.encodeToString(encrypted, android.util.Base64.NO_WRAP)) }
+        val encrypted =
+            aead.encrypt(value.toByteArray(Charsets.UTF_8), key.toByteArray(Charsets.UTF_8))
+        prefs.edit {
+            putString(
+                key,
+                android.util.Base64.encodeToString(encrypted, android.util.Base64.NO_WRAP)
+            )
+        }
     }
 
     override fun load(key: String): String? {

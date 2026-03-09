@@ -57,7 +57,10 @@ open class WebChromeClientDecorator(
         delegate?.onPermissionRequestCanceled(request) ?: super.onPermissionRequestCanceled(request)
     }
 
-    override fun onGeolocationPermissionsShowPrompt(origin: String?, callback: GeolocationPermissions.Callback?) {
+    override fun onGeolocationPermissionsShowPrompt(
+        origin: String?,
+        callback: GeolocationPermissions.Callback?
+    ) {
         delegate?.onGeolocationPermissionsShowPrompt(origin, callback)
             ?: super.onGeolocationPermissionsShowPrompt(origin, callback)
     }
@@ -66,18 +69,54 @@ open class WebChromeClientDecorator(
         delegate?.onGeolocationPermissionsHidePrompt() ?: super.onGeolocationPermissionsHidePrompt()
     }
 
-    override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean =
-        delegate?.onJsAlert(view, url, message, result) ?: super.onJsAlert(view, url, message, result)
+    override fun onJsAlert(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean =
+        delegate?.onJsAlert(view, url, message, result) ?: super.onJsAlert(
+            view,
+            url,
+            message,
+            result
+        )
 
-    override fun onJsConfirm(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean =
-        delegate?.onJsConfirm(view, url, message, result) ?: super.onJsConfirm(view, url, message, result)
+    override fun onJsConfirm(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean =
+        delegate?.onJsConfirm(view, url, message, result) ?: super.onJsConfirm(
+            view,
+            url,
+            message,
+            result
+        )
 
-    override fun onJsPrompt(view: WebView?, url: String?, message: String?, defaultValue: String?, result: JsPromptResult?): Boolean =
+    override fun onJsPrompt(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        defaultValue: String?,
+        result: JsPromptResult?
+    ): Boolean =
         delegate?.onJsPrompt(view, url, message, defaultValue, result)
             ?: super.onJsPrompt(view, url, message, defaultValue, result)
 
-    override fun onJsBeforeUnload(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean =
-        delegate?.onJsBeforeUnload(view, url, message, result) ?: super.onJsBeforeUnload(view, url, message, result)
+    override fun onJsBeforeUnload(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean =
+        delegate?.onJsBeforeUnload(view, url, message, result) ?: super.onJsBeforeUnload(
+            view,
+            url,
+            message,
+            result
+        )
 
     override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean =
         delegate?.onConsoleMessage(consoleMessage) ?: super.onConsoleMessage(consoleMessage)
@@ -94,7 +133,11 @@ open class WebChromeClientDecorator(
     }
 
     @Deprecated("Deprecated in Java")
-    override fun onShowCustomView(view: View?, requestedOrientation: Int, callback: CustomViewCallback?) {
+    override fun onShowCustomView(
+        view: View?,
+        requestedOrientation: Int,
+        callback: CustomViewCallback?
+    ) {
         @Suppress("DEPRECATION")
         delegate?.onShowCustomView(view, requestedOrientation, callback)
             ?: super.onShowCustomView(view, requestedOrientation, callback)
@@ -104,7 +147,12 @@ open class WebChromeClientDecorator(
         delegate?.onHideCustomView() ?: super.onHideCustomView()
     }
 
-    override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean =
+    override fun onCreateWindow(
+        view: WebView?,
+        isDialog: Boolean,
+        isUserGesture: Boolean,
+        resultMsg: Message?
+    ): Boolean =
         delegate?.onCreateWindow(view, isDialog, isUserGesture, resultMsg)
             ?: super.onCreateWindow(view, isDialog, isUserGesture, resultMsg)
 
@@ -132,7 +180,21 @@ open class WebChromeClientDecorator(
         url: String?, databaseIdentifier: String?, quota: Long,
         estimatedDatabaseSize: Long, totalQuota: Long, quotaUpdater: WebStorage.QuotaUpdater?
     ) {
-        delegate?.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater)
-            ?: super.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater)
+        delegate?.onExceededDatabaseQuota(
+            url,
+            databaseIdentifier,
+            quota,
+            estimatedDatabaseSize,
+            totalQuota,
+            quotaUpdater
+        )
+            ?: super.onExceededDatabaseQuota(
+                url,
+                databaseIdentifier,
+                quota,
+                estimatedDatabaseSize,
+                totalQuota,
+                quotaUpdater
+            )
     }
 }

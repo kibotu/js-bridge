@@ -1,9 +1,8 @@
 package net.kibotu.jsbridge.commands
 
-import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
-import net.kibotu.jsbridge.commands.BridgeCommand
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import org.json.JSONObject
 import timber.log.Timber
 

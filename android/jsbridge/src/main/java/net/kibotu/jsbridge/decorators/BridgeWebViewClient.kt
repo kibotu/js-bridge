@@ -3,7 +3,6 @@ package net.kibotu.jsbridge.decorators
 import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.JavaScriptBridge.Companion.bridge
 import net.kibotu.jsbridge.SafeAreaService
 import timber.log.Timber

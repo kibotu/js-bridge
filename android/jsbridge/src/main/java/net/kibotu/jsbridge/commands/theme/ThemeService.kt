@@ -6,6 +6,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import net.kibotu.jsbridge.commands.theme.ThemeService.onThemeChanged
 
 /**
  * Emits theme change events requested by web content.

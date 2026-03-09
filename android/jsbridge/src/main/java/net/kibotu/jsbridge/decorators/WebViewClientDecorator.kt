@@ -31,12 +31,18 @@ open class WebViewClientDecorator(
 
     @RequiresApi(24)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
-        delegate?.shouldOverrideUrlLoading(view, request) ?: super.shouldOverrideUrlLoading(view, request)
+        delegate?.shouldOverrideUrlLoading(view, request) ?: super.shouldOverrideUrlLoading(
+            view,
+            request
+        )
 
     @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         @Suppress("DEPRECATION")
-        return delegate?.shouldOverrideUrlLoading(view, url) ?: super.shouldOverrideUrlLoading(view, url)
+        return delegate?.shouldOverrideUrlLoading(view, url) ?: super.shouldOverrideUrlLoading(
+            view,
+            url
+        )
     }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -55,45 +61,88 @@ open class WebViewClientDecorator(
         delegate?.onPageCommitVisible(view, url) ?: super.onPageCommitVisible(view, url)
     }
 
-    override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? =
-        delegate?.shouldInterceptRequest(view, request) ?: super.shouldInterceptRequest(view, request)
+    override fun shouldInterceptRequest(
+        view: WebView?,
+        request: WebResourceRequest?
+    ): WebResourceResponse? =
+        delegate?.shouldInterceptRequest(view, request) ?: super.shouldInterceptRequest(
+            view,
+            request
+        )
 
     @Deprecated("Deprecated in Java")
     override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
         @Suppress("DEPRECATION")
-        return delegate?.shouldInterceptRequest(view, url) ?: super.shouldInterceptRequest(view, url)
+        return delegate?.shouldInterceptRequest(view, url) ?: super.shouldInterceptRequest(
+            view,
+            url
+        )
     }
 
-    override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
-        delegate?.onReceivedError(view, request, error) ?: super.onReceivedError(view, request, error)
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+        delegate?.onReceivedError(view, request, error) ?: super.onReceivedError(
+            view,
+            request,
+            error
+        )
     }
 
     @Deprecated("Deprecated in Java")
-    override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
+    override fun onReceivedError(
+        view: WebView?,
+        errorCode: Int,
+        description: String?,
+        failingUrl: String?
+    ) {
         @Suppress("DEPRECATION")
         delegate?.onReceivedError(view, errorCode, description, failingUrl)
             ?: super.onReceivedError(view, errorCode, description, failingUrl)
     }
 
-    override fun onReceivedHttpError(view: WebView?, request: WebResourceRequest?, errorResponse: WebResourceResponse?) {
+    override fun onReceivedHttpError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        errorResponse: WebResourceResponse?
+    ) {
         delegate?.onReceivedHttpError(view, request, errorResponse)
             ?: super.onReceivedHttpError(view, request, errorResponse)
     }
 
     override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
-        delegate?.onReceivedSslError(view, handler, error) ?: super.onReceivedSslError(view, handler, error)
+        delegate?.onReceivedSslError(view, handler, error) ?: super.onReceivedSslError(
+            view,
+            handler,
+            error
+        )
     }
 
     override fun onReceivedClientCertRequest(view: WebView?, request: ClientCertRequest?) {
-        delegate?.onReceivedClientCertRequest(view, request) ?: super.onReceivedClientCertRequest(view, request)
+        delegate?.onReceivedClientCertRequest(view, request) ?: super.onReceivedClientCertRequest(
+            view,
+            request
+        )
     }
 
-    override fun onReceivedHttpAuthRequest(view: WebView?, handler: HttpAuthHandler?, host: String?, realm: String?) {
+    override fun onReceivedHttpAuthRequest(
+        view: WebView?,
+        handler: HttpAuthHandler?,
+        host: String?,
+        realm: String?
+    ) {
         delegate?.onReceivedHttpAuthRequest(view, handler, host, realm)
             ?: super.onReceivedHttpAuthRequest(view, handler, host, realm)
     }
 
-    override fun onReceivedLoginRequest(view: WebView?, realm: String?, account: String?, args: String?) {
+    override fun onReceivedLoginRequest(
+        view: WebView?,
+        realm: String?,
+        account: String?,
+        args: String?
+    ) {
         delegate?.onReceivedLoginRequest(view, realm, account, args)
             ?: super.onReceivedLoginRequest(view, realm, account, args)
     }
@@ -108,15 +157,27 @@ open class WebViewClientDecorator(
     @Deprecated("Deprecated in Java")
     override fun onFormResubmission(view: WebView?, dontResend: Message?, resend: Message?) {
         @Suppress("DEPRECATION")
-        delegate?.onFormResubmission(view, dontResend, resend) ?: super.onFormResubmission(view, dontResend, resend)
+        delegate?.onFormResubmission(view, dontResend, resend) ?: super.onFormResubmission(
+            view,
+            dontResend,
+            resend
+        )
     }
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-        delegate?.doUpdateVisitedHistory(view, url, isReload) ?: super.doUpdateVisitedHistory(view, url, isReload)
+        delegate?.doUpdateVisitedHistory(view, url, isReload) ?: super.doUpdateVisitedHistory(
+            view,
+            url,
+            isReload
+        )
     }
 
     override fun onScaleChanged(view: WebView?, oldScale: Float, newScale: Float) {
-        delegate?.onScaleChanged(view, oldScale, newScale) ?: super.onScaleChanged(view, oldScale, newScale)
+        delegate?.onScaleChanged(view, oldScale, newScale) ?: super.onScaleChanged(
+            view,
+            oldScale,
+            newScale
+        )
     }
 
     override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean =
@@ -127,7 +188,12 @@ open class WebViewClientDecorator(
     }
 
     @RequiresApi(27)
-    override fun onSafeBrowsingHit(view: WebView?, request: WebResourceRequest?, threatType: Int, callback: SafeBrowsingResponse?) {
+    override fun onSafeBrowsingHit(
+        view: WebView?,
+        request: WebResourceRequest?,
+        threatType: Int,
+        callback: SafeBrowsingResponse?
+    ) {
         delegate?.onSafeBrowsingHit(view, request, threatType, callback)
             ?: super.onSafeBrowsingHit(view, request, threatType, callback)
     }

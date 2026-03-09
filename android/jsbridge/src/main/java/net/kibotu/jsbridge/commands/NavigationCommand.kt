@@ -2,11 +2,11 @@ package net.kibotu.jsbridge.commands
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -33,7 +33,8 @@ class NavigationCommand(private val contextProvider: () -> Context?) : BridgeCom
 
             when {
                 goBack == true -> {
-                    val activity = BridgeContextProvider.findActivity(contextProvider()) as? AppCompatActivity
+                    val activity =
+                        BridgeContextProvider.findActivity(contextProvider()) as? AppCompatActivity
                     if (activity == null) {
                         return@withContext BridgeResponseUtils.createErrorResponse(
                             "NO_ACTIVITY",

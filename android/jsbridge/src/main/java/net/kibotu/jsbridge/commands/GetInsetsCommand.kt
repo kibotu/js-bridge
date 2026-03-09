@@ -2,10 +2,10 @@ package net.kibotu.jsbridge.commands
 
 import android.content.Context
 import androidx.core.view.WindowInsetsCompat
-import net.kibotu.jsbridge.BridgeContextProvider
-import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -83,7 +83,10 @@ class GetInsetsCommand(private val contextProvider: () -> Context?) : BridgeComm
             result
         } catch (e: Exception) {
             Timber.e(e)
-            BridgeResponseUtils.createErrorResponse("INSETS_FAILED", e.message ?: "Failed to get insets")
+            BridgeResponseUtils.createErrorResponse(
+                "INSETS_FAILED",
+                e.message ?: "Failed to get insets"
+            )
         }
     }
 }

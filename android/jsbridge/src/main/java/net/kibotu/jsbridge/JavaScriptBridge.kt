@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import net.kibotu.jsbridge.JavaScriptBridge.Companion.DEFAULT_BRIDGE_NAME
+import net.kibotu.jsbridge.JavaScriptBridge.Companion.bridge
 import net.kibotu.jsbridge.commands.BridgeCommand
 import net.kibotu.jsbridge.commands.BridgeError
 import net.kibotu.jsbridge.decorators.BridgeWebViewClient
@@ -83,11 +85,12 @@ class JavaScriptBridge(
             val map = bridges.getOrPut(webView) { mutableMapOf() }
             map[bridgeName] = bridge
 
-            val currentClient = if (WebViewFeature.isFeatureSupported(WebViewFeature.GET_WEB_VIEW_CLIENT)) {
-                WebViewCompat.getWebViewClient(webView)
-            } else {
-                null
-            }
+            val currentClient =
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.GET_WEB_VIEW_CLIENT)) {
+                    WebViewCompat.getWebViewClient(webView)
+                } else {
+                    null
+                }
             if (currentClient !is BridgeWebViewClient) {
                 webView.webViewClient = BridgeWebViewClient(currentClient)
             }
@@ -185,7 +188,11 @@ class JavaScriptBridge(
         if (result is JSONObject && result.has("error")) {
             val error = result.optJSONObject("error")
             if (error != null) {
-                sendErrorToWeb(id, error.optString("code", "UNKNOWN"), error.optString("message", "Unknown error"))
+                sendErrorToWeb(
+                    id,
+                    error.optString("code", "UNKNOWN"),
+                    error.optString("message", "Unknown error")
+                )
                 return
             }
         }

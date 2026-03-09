@@ -2,11 +2,15 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>JavaScript Bridge Demo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material-darker.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/neat.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material-darker.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/neat.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/css/css.min.js"></script>
@@ -384,7 +388,8 @@
         <h1>JavaScript Bridge Demo</h1>
         <p>Unified Web ↔ Native Communication (Android &amp; iOS)</p>
     </div>
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeToggle">🌙</button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeToggle">🌙
+    </button>
 </div>
 
 <div class="status" id="bridgeStatus">
@@ -398,9 +403,13 @@
         <summary>Specification</summary>
         <div class="collapsible-content">
             <div class="device-info" style="display:block; margin-top:8px;">
-                <div class="device-info-item"><strong>Global:</strong> <span>window.jsbridge</span></div>
-                <div class="device-info-item"><strong>Schema:</strong> <code class="badge" id="specSchemaVersion">--</code></div>
-                <div class="device-info-item"><strong>Platform:</strong> <span id="specPlatform">--</span></div>
+                <div class="device-info-item"><strong>Global:</strong> <span>window.jsbridge</span>
+                </div>
+                <div class="device-info-item"><strong>Schema:</strong> <code class="badge"
+                                                                             id="specSchemaVersion">--</code>
+                </div>
+                <div class="device-info-item"><strong>Platform:</strong> <span
+                        id="specPlatform">--</span></div>
             </div>
 
             <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">Quick start</h3>
@@ -418,15 +427,18 @@ const info = await jsbridge.call('deviceInfo');</textarea></div>
             <ul class="doc-list">
                 <li><strong>jsbridge.ready(): Promise&lt;void&gt;</strong></li>
                 <li><strong>jsbridge.call(action, content?, opts?): Promise&lt;any&gt;</strong></li>
-                <li><strong>jsbridge.on(handler)</strong> / <strong>jsbridge.off(handler)</strong></li>
+                <li><strong>jsbridge.on(handler)</strong> / <strong>jsbridge.off(handler)</strong>
+                </li>
                 <li><strong>jsbridge.cancelAll()</strong></li>
                 <li><strong>jsbridge.setDebug(bool)</strong></li>
                 <li><strong>jsbridge.setMockHandler(fn | null)</strong></li>
-                <li><strong>jsbridge.platform</strong> — <code class="badge">'android' | 'ios' | 'desktop'</code></li>
+                <li><strong>jsbridge.platform</strong> — <code class="badge">'android' | 'ios' |
+                    'desktop'</code></li>
                 <li><strong>jsbridge.schemaVersion</strong> — integer</li>
             </ul>
 
-            <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">Message format</h3>
+            <h3 style="margin-top:12px; font-size:14px; color:var(--text-primary);">Message
+                format</h3>
             <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">{
   version: jsbridge.schemaVersion,
   id: "msg_...",
@@ -455,7 +467,8 @@ const info = await jsbridge.call('deviceInfo');</textarea></div>
     </div>
     <div id="deviceInfo" class="device-info" style="display: none;"></div>
     <div id="networkInfo" class="device-info" style="display: none;">
-        <div class="device-info-item"><strong>Status:</strong> <span id="networkStatus">--</span></div>
+        <div class="device-info-item"><strong>Status:</strong> <span id="networkStatus">--</span>
+        </div>
         <div class="device-info-item"><strong>Type:</strong> <span id="networkType">--</span></div>
     </div>
     <details class="collapsible" style="margin-top:12px;">
@@ -490,8 +503,10 @@ await jsbridge.call('openSettings');</textarea></div>
     <div class="test-section">
         <h3>CSS Custom Properties</h3>
         <p style="font-size: 13px; color: var(--warn-text); margin-top: 4px;">
-            Native automatically pushes <code>--bridge-inset-*</code> CSS properties whenever bars change.
-            Use <code>var(--bridge-inset-top)</code> etc. in your CSS. The <code>insets</code> action
+            Native automatically pushes <code>--bridge-inset-*</code> CSS properties whenever bars
+            change.
+            Use <code>var(--bridge-inset-top)</code> etc. in your CSS. The <code>insets</code>
+            action
             is for on-demand JavaScript queries.
         </p>
     </div>
@@ -505,7 +520,8 @@ body {
 }</textarea></div>
             <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">/* JS: query on demand */
 const insets = await jsbridge.call('insets');
-// { statusBar: { height, visible }, systemNavigation: { ... }, safeArea: { top, right, bottom, left } }</textarea></div>
+// { statusBar: { height, visible }, systemNavigation: { ... }, safeArea: { top, right, bottom, left } }</textarea>
+            </div>
         </div>
     </details>
 </div>
@@ -622,7 +638,8 @@ await jsbridge.call('systemBars', {
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
-            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call('haptic', { vibrate: true });</textarea></div>
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call('haptic', { vibrate: true });</textarea>
+            </div>
         </div>
     </details>
 </div>
@@ -659,7 +676,8 @@ await jsbridge.call('navigation', { goBack: true });</textarea></div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
-            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call('copyToClipboard', { text: 'Text to copy' });</textarea></div>
+            <div class="cm-wrapper"><textarea class="cm-code" data-mode="javascript">await jsbridge.call('copyToClipboard', { text: 'Text to copy' });</textarea>
+            </div>
         </div>
     </details>
 </div>
@@ -667,8 +685,12 @@ await jsbridge.call('navigation', { goBack: true });</textarea></div>
 <!-- Lifecycle -->
 <div class="section">
     <h2>Lifecycle Events</h2>
-    <p style="color:var(--text-secondary);font-size:14px;">Native sends <code>focused</code> / <code>defocused</code> events automatically. Current state:</p>
-    <div id="lifecycleStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--success);font-weight:600;font-size:15px;display:inline-block;">focused</div>
+    <p style="color:var(--text-secondary);font-size:14px;">Native sends <code>focused</code> /
+        <code>defocused</code> events automatically. Current state:</p>
+    <div id="lifecycleStatus"
+         style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--success);font-weight:600;font-size:15px;display:inline-block;">
+        focused
+    </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
         <div class="collapsible-content">
@@ -687,8 +709,12 @@ jsbridge.on((msg) => {
 <!-- Refresh / Push -->
 <div class="section">
     <h2>Refresh / Push Events</h2>
-    <p style="color:var(--text-secondary);font-size:14px;">Native sends push events automatically. Latest:</p>
-    <div id="pushStatus" style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--accent);font-weight:600;font-size:15px;display:inline-block;">waiting...</div>
+    <p style="color:var(--text-secondary);font-size:14px;">Native sends push events automatically.
+        Latest:</p>
+    <div id="pushStatus"
+         style="margin-top:8px;padding:10px 14px;border-radius:8px;background:var(--info-bg);color:var(--accent);font-weight:600;font-size:15px;display:inline-block;">
+        waiting...
+    </div>
     <div class="button-group" style="margin-top:12px;">
         <button onclick="triggerRefresh()">Trigger Refresh</button>
     </div>
@@ -718,9 +744,11 @@ await jsbridge.call('refresh', { command: 'refresh' });</textarea></div>
         <button onclick="removeData()">Remove</button>
     </div>
     <div id="storageInfo" class="device-info" style="display: none;">
-        <div class="device-info-item"><strong>Operation:</strong> <span id="storageOp">--</span></div>
+        <div class="device-info-item"><strong>Operation:</strong> <span id="storageOp">--</span>
+        </div>
         <div class="device-info-item"><strong>Key:</strong> <span id="storageKey">--</span></div>
-        <div class="device-info-item"><strong>Value:</strong> <span id="storageValue">--</span></div>
+        <div class="device-info-item"><strong>Value:</strong> <span id="storageValue">--</span>
+        </div>
     </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>
@@ -775,9 +803,12 @@ jsbridge.call('trackScreen', {
         <button onclick="testVersionCompatibility()">Test Compatibility</button>
     </div>
     <div id="schemaInfo" class="device-info" style="display: none;">
-        <div class="device-info-item"><strong>Version:</strong> <span id="schemaVersion">--</span></div>
-        <div class="device-info-item"><strong>Platform:</strong> <span id="schemaPlatform">--</span></div>
-        <div class="device-info-item"><strong>Compatibility:</strong> <span id="schemaCompat">--</span></div>
+        <div class="device-info-item"><strong>Version:</strong> <span id="schemaVersion">--</span>
+        </div>
+        <div class="device-info-item"><strong>Platform:</strong> <span id="schemaPlatform">--</span>
+        </div>
+        <div class="device-info-item"><strong>Compatibility:</strong> <span
+                id="schemaCompat">--</span></div>
     </div>
     <details class="collapsible" style="margin-top:12px;">
         <summary>Spec &amp; Usage</summary>

@@ -75,6 +75,7 @@ fun Screen(
             0 -> navController.navigate("tab1") {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
+
             1 -> navController.navigate("tab2") {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
@@ -96,7 +97,8 @@ fun Screen(
                         modifier = Modifier
                             .windowInsetsPadding(WindowInsets.statusBars)
                             .onGloballyPositioned {
-                                SafeAreaService.topBarHeightDp = pxToDp(it.size.height, density.density)
+                                SafeAreaService.topBarHeightDp =
+                                    pxToDp(it.size.height, density.density)
                             }
                     ) {
                         TopAppBar(

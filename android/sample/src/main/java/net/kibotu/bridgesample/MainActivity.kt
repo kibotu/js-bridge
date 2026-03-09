@@ -12,15 +12,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import net.kibotu.bridgesample.misc.weak
+import net.kibotu.bridgesample.ui.Screen
+import net.kibotu.bridgesample.ui.theme.BridgeSampleTheme
 import net.kibotu.jsbridge.JavaScriptBridge
 import net.kibotu.jsbridge.SafeAreaService
 import net.kibotu.jsbridge.commands.refresh.RefreshService
 import net.kibotu.jsbridge.commands.theme.ThemeService
-import net.kibotu.bridgesample.misc.weak
-import net.kibotu.bridgesample.ui.Screen
-import net.kibotu.bridgesample.ui.theme.BridgeSampleTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.random.Random
 

@@ -26,7 +26,9 @@ class DeviceInfoCommand(private val contextProvider: () -> Context?) : BridgeCom
     override val action = "deviceInfo"
 
     override suspend fun handle(content: Any?): Any? {
-        val context = requireNotNull(BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider())
+        val context = requireNotNull(
+            BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        )
         return JSONObject().apply {
             put("platform", "Android")
             put("osVersion", Build.VERSION.RELEASE)
