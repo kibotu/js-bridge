@@ -16,7 +16,7 @@ function getDeviceInfo() {
     window[cbName] = function (json) {
       const result = JSON.parse(json); // Android sends strings, naturally
       delete window[cbName];
-      doSomethingWith(r[ARTICLE.md](ARTICLE.md)esult);
+      doSomethingWith(result);
     };
     window.AndroidBridge.getDeviceInfo(cbName);
   } else if (window.webkit?.messageHandlers?.nativeBridge) {
