@@ -11,6 +11,6 @@ public final class RefreshCommand: BridgeCommand {
 
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
-        return nil
+        nil
     }
 }

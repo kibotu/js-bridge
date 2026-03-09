@@ -10,14 +10,12 @@ private enum AssociatedKeys {
 // MARK: - Default property
 
 extension WindowFocusObserver {
-
     public var wantsToListenOnFocusEvents: Bool { true }
 }
 
 // MARK: - Hook methods
 
 extension WindowFocusObserver {
-
     /// Call from `viewDidAppear(_:)`.
     public func windowFocusDidAppear() {
         let hasFocus = isCurrentlyFocused()
@@ -44,7 +42,6 @@ extension WindowFocusObserver {
 // MARK: - Associated-object state
 
 extension WindowFocusObserver {
-
     private var currentlyHasFocus: Bool? {
         get { objc_getAssociatedObject(self, &AssociatedKeys.currentlyHasFocus) as? Bool }
         set { objc_setAssociatedObject(self, &AssociatedKeys.currentlyHasFocus, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
@@ -69,7 +66,6 @@ extension WindowFocusObserver {
 // MARK: - Focus state management
 
 extension WindowFocusObserver {
-
     private func dispatchFocusChange(_ hasFocus: Bool) {
         guard currentlyHasFocus != hasFocus else { return }
         currentlyHasFocus = hasFocus
@@ -80,7 +76,6 @@ extension WindowFocusObserver {
 // MARK: - Focus detection
 
 extension WindowFocusObserver {
-
     private func isCurrentlyFocused() -> Bool {
         guard UIApplication.shared.applicationState == .active else { return false }
         guard isViewLoaded, view.window != nil else { return false }
@@ -104,7 +99,6 @@ extension WindowFocusObserver {
 // MARK: - Monitoring
 
 extension WindowFocusObserver {
-
     private func startFocusMonitoring() {
         guard wantsToListenOnFocusEvents else { return }
         addAppLifecycleObservers()
@@ -128,7 +122,6 @@ extension WindowFocusObserver {
 // MARK: - App lifecycle notifications
 
 extension WindowFocusObserver {
-
     private func addAppLifecycleObservers() {
         guard backgroundObserver == nil else { return }
 

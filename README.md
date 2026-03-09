@@ -1,5 +1,8 @@
 # jsbridge
 
+[![Android CI](https://github.com/kibotu/js-bridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/android.yml)
+[![iOS CI](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/js-bridge/actions/workflows/ios.yml)
+
 A unified, promise-based JavaScript bridge for bidirectional communication between web content and native mobile apps. `window.jsbridge` works identically on Android and iOS. Life's too short for platform `if` statements.
 
 ---

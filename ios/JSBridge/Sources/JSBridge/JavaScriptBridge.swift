@@ -99,11 +99,11 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
     }
 
     private func command(for action: String) -> (any BridgeCommand)? {
-        return commands.first { $0.action == action }
+        commands.first { $0.action == action }
     }
 
     nonisolated private func isVersionSupported(_ version: Int) -> Bool {
-        return version <= schemaVersion
+        version <= schemaVersion
     }
 
     /// Injects the unified bridge JavaScript into the WebView at document start.

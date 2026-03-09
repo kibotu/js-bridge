@@ -8,7 +8,7 @@ import UIKit
 /// - BottomNavigationCommand (after toggling bottom bar)
 /// - Window focus gain (returning from another screen/app)
 @MainActor
-public final class SafeAreaService: Sendable {
+public final class SafeAreaService {
     public static let shared = SafeAreaService()
 
     public var topBarHeight: CGFloat = 44

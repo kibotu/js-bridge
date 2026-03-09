@@ -3,7 +3,6 @@ import Foundation
 /// Typed extraction helpers for bridge command content dictionaries.
 /// Mirrors Android's BridgeParsingUtils for consistent parameter parsing across platforms.
 extension Dictionary where Key == String, Value == Any {
-
     public func string(_ key: String) -> String? {
         self[key] as? String
     }

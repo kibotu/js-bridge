@@ -8,7 +8,6 @@ import WebKit
 /// an app opt-in to all defaults with a single call.
 @MainActor
 public struct DefaultCommands {
-
     /// Returns all built-in commands.
     ///
     /// - Parameters:
@@ -20,7 +19,7 @@ public struct DefaultCommands {
         webView: WKWebView? = nil,
         bridge: JavaScriptBridge? = nil
     ) -> [any BridgeCommand] {
-        return [
+        [
             DeviceInfoCommand(),
             NetworkStatusCommand(),
             OpenSettingsCommand(),
@@ -47,7 +46,7 @@ public struct DefaultCommands {
 
             ThemeChangedCommand(),
 
-            RefreshCommand(),
+            RefreshCommand()
         ]
     }
 }

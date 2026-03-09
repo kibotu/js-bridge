@@ -73,18 +73,25 @@ public struct AnyCodable: Codable, @unchecked Sendable {
         switch value {
         case let bool as Bool:
             try container.encode(bool)
+
         case let int as Int:
             try container.encode(int)
+
         case let double as Double:
             try container.encode(double)
+
         case let string as String:
             try container.encode(string)
+
         case let array as [Any]:
             try container.encode(array.map { AnyCodable($0) })
+
         case let dictionary as [String: Any]:
             try container.encode(dictionary.mapValues { AnyCodable($0) })
+
         case is NSNull:
             try container.encodeNil()
+
         default:
             let context = EncodingError.Context(
                 codingPath: container.codingPath,

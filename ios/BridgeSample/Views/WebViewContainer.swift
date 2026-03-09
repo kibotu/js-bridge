@@ -43,7 +43,7 @@ class BoundsRespectingWebView: WKWebView {
     }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        return self.bounds.contains(point)
+        self.bounds.contains(point)
     }
 }
 

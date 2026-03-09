@@ -14,7 +14,7 @@ public final class NetworkStatusCommand: BridgeCommand {
 
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             let monitor = NWPathMonitor()
             let queue = DispatchQueue(label: "net.kibotu.networkstatus.monitor")
             

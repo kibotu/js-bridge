@@ -43,12 +43,16 @@ public enum BridgeError: Error, Sendable {
         switch self {
         case .invalidMessage:
             return "INVALID_MESSAGE"
+
         case .unknownAction:
             return "UNKNOWN_ACTION"
+
         case .invalidParameter:
             return "INVALID_PARAMETER"
+
         case .internalError:
             return "INTERNAL_ERROR"
+
         case .unsupportedVersion:
             return "UNSUPPORTED_VERSION"
         }
@@ -58,12 +62,16 @@ public enum BridgeError: Error, Sendable {
         switch self {
         case .invalidMessage:
             return "Invalid message format"
+
         case .unknownAction(let action):
             return "Unknown action: \(action)"
+
         case .invalidParameter(let param):
             return "Invalid or missing parameter: \(param)"
+
         case .internalError(let msg):
             return "Internal error: \(msg)"
+
         case .unsupportedVersion(let version):
             return "Unsupported schema version: \(version)"
         }

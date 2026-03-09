@@ -40,16 +40,20 @@ public final class RequestPermissionsCommand: BridgeCommand {
                 AVCaptureDevice.requestAccess(for: .video) { granted in
                     continuation.resume(returning: granted ? "granted" : "denied")
                 }
+
             case "microphone":
                 AVCaptureDevice.requestAccess(for: .audio) { granted in
                     continuation.resume(returning: granted ? "granted" : "denied")
                 }
+
             case "photoLibrary":
                 PHPhotoLibrary.requestAuthorization { status in
                     continuation.resume(returning: status == .authorized || status == .limited ? "granted" : "denied")
                 }
+
             case "location":
                 continuation.resume(returning: "unsupported")
+
             default:
                 Orchard.w("[Bridge] Unknown permission: \(permission)")
                 continuation.resume(returning: "unknown")

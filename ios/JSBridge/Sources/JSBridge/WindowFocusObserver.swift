@@ -13,7 +13,6 @@ import UIKit
 /// 3. Implement `onWindowFocusChanged(hasFocus:)`.
 @MainActor
 public protocol WindowFocusObserver: UIViewController {
-
     /// Whether this view controller wants focus monitoring.
     /// Default is `true`. Return `false` to opt out.
     var wantsToListenOnFocusEvents: Bool { get }
