@@ -32,28 +32,10 @@ kotlin {
     }
 }
 
-val isJitpack = System.getenv("JITPACK") == "true"
-
-if (!isJitpack) {
-    mavenPublishing {
+mavenPublishing {
+    if (System.getenv("JITPACK") != "true") {
         publishToMavenCentral()
         signAllPublications()
-    }
-}
-
-if (isJitpack) {
-    apply(plugin = "maven-publish")
-    afterEvaluate {
-        extensions.configure<PublishingExtension> {
-            publications {
-                create<MavenPublication>("release") {
-                    from(components["release"])
-                    groupId = property("GROUP") as String
-                    artifactId = property("POM_ARTIFACT_ID") as String
-                    version = version
-                }
-            }
-        }
     }
 }
 
