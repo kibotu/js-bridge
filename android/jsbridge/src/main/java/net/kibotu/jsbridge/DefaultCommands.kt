@@ -10,7 +10,6 @@ import net.kibotu.jsbridge.commands.HapticCommand
 import net.kibotu.jsbridge.commands.LoadSecureDataCommand
 import net.kibotu.jsbridge.commands.NavigationCommand
 import net.kibotu.jsbridge.commands.OpenSettingsCommand
-import net.kibotu.jsbridge.commands.OpenUrlCommand
 import net.kibotu.jsbridge.commands.RemoveSecureDataCommand
 import net.kibotu.jsbridge.commands.RequestPermissionsCommand
 import net.kibotu.jsbridge.commands.SaveSecureDataCommand
@@ -58,7 +57,6 @@ object DefaultCommands {
             RequestPermissionsCommand(),
             OpenSettingsCommand(contextProvider),
             CopyToClipboardCommand(contextProvider),
-            OpenUrlCommand(),
             NavigationCommand(contextProvider),
             TopNavigationCommand(getBridge),
             BottomNavigationCommand(getBridge),

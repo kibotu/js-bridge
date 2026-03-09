@@ -80,9 +80,9 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
 
     deinit {
         let name = self.name
-        let controller = webView?.configuration.userContentController
-        MainActor.assumeIsolated {
-            controller?.removeScriptMessageHandler(forName: name)
+        let webView = self.webView
+        Task { @MainActor in
+            webView?.configuration.userContentController.removeScriptMessageHandler(forName: name)
         }
     }
 

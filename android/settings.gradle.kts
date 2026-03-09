@@ -26,4 +26,3 @@ dependencyResolutionManagement {
 rootProject.name = "BridgeSample"
 include(":jsbridge")
 include(":sample")
-

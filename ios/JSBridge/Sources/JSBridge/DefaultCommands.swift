@@ -31,7 +31,6 @@ public struct DefaultCommands {
             TopNavigationCommand(bridge: bridge),
             BottomNavigationCommand(bridge: bridge),
             NavigationCommand(viewController: viewController, webView: webView),
-            OpenUrlCommand(),
 
             SystemBarsCommand(),
             GetInsetsCommand(viewController: viewController),

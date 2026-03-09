@@ -112,7 +112,9 @@ extension WindowFocusObserver {
         focusCheckTimer?.invalidate()
         focusCheckTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
             guard let self else { return }
-            self.dispatchFocusChange(self.isCurrentlyFocused())
+            MainActor.assumeIsolated {
+                self.dispatchFocusChange(self.isCurrentlyFocused())
+            }
         }
     }
 

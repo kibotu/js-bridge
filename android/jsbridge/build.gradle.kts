@@ -1,14 +1,14 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
 }
 
 android {
     namespace = "net.kibotu.jsbridge"
-    compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildTools.get()
 
     defaultConfig {
-        minSdk = 23
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     compileOptions {
@@ -19,7 +19,7 @@ android {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jdk.get().toInt()))
     }
 }
 
@@ -32,10 +32,10 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.jakewharton.timber:timber:5.0.1")
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.webkit:webkit:1.15.0")
-    compileOnly("com.google.crypto.tink:tink-android:1.20.0")
-    compileOnly("androidx.security:security-crypto:1.1.0")
+    implementation(libs.timber)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.webkit)
+    compileOnly(libs.tink.android)
+    compileOnly(libs.androidx.security.crypto)
 }
