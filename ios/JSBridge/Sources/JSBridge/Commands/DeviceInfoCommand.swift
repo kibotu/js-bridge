@@ -9,20 +9,21 @@ public final class DeviceInfoCommand: BridgeCommand {
 
     @MainActor
     public func handle(content: [String: Any]?) async throws -> [String: Any]? {
+        let osVersion = UIDevice.current.systemVersion
         return [
             "platform": "iOS",
-            "osVersion": UIDevice.current.systemVersion,
-            "sdkVersion": getSDKVersion(),
+            "osVersion": osVersion,
+            "sdkVersion": getSDKVersion(fallback: osVersion),
             "manufacturer": "Apple",
             "model": getDeviceIdentifier(),
         ]
     }
     
-    private func getSDKVersion() -> String {
+    nonisolated private func getSDKVersion(fallback: String) -> String {
         if let deploymentTarget = Bundle.main.infoDictionary?["MinimumOSVersion"] as? String {
             return deploymentTarget
         }
-        return UIDevice.current.systemVersion
+        return fallback
     }
     
     nonisolated private func getDeviceIdentifier() -> String {
