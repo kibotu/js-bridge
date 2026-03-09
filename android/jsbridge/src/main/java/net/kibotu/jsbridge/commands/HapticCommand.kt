@@ -51,9 +51,14 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
                     )
                 }
 
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    vibrator.vibrate(50)
+                }
 
                 BridgeResponseUtils.createSuccessResponse()
             } catch (e: Exception) {
