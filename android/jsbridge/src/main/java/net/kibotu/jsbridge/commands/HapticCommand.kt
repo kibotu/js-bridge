@@ -84,10 +84,16 @@ class HapticCommand(private val contextProvider: () -> Context?) : BridgeCommand
             HapticFeedbackConstants.LONG_PRESS
         }
 
-        return view.performHapticFeedback(
-            constant,
-            HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING or HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            view.performHapticFeedback(constant)
+        } else {
+            @Suppress("DEPRECATION")
+            view.performHapticFeedback(
+                constant,
+                HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+                    or HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+        }
     }
 
     private fun getVibrator(context: Context): Vibrator? {

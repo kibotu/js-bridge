@@ -1,9 +1,8 @@
 package net.kibotu.jsbridge.commands
 
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +34,11 @@ import timber.log.Timber
  */
 class RemoveSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
+    private val secureStorage by lazy {
+        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        SecureStorage(requireNotNull(context))
+    }
+
     override val action = "removeSecureData"
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.IO) {
@@ -48,22 +52,8 @@ class RemoveSecureDataCommand(private val contextProvider: () -> Context?) : Bri
         }
 
         try {
-            val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
-
-            val masterKey = MasterKey.Builder(requireNotNull(context))
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            val prefs = EncryptedSharedPreferences.create(
-                requireNotNull(context),
-                "secure_storage",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
-            val keyExisted = prefs.contains(key)
-            prefs.edit().remove(key).apply()
+            val keyExisted = secureStorage.contains(key)
+            secureStorage.remove(key)
             Timber.i("[handle] removed key=$key, existed=$keyExisted")
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {

@@ -36,5 +36,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.webkit:webkit:1.15.0")
-    implementation("androidx.security:security-crypto:1.1.0")
+    compileOnly("com.google.crypto.tink:tink-android:1.20.0")
+    compileOnly("androidx.security:security-crypto:1.1.0")
 }

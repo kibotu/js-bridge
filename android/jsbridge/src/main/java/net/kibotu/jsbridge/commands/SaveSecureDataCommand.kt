@@ -1,9 +1,8 @@
 package net.kibotu.jsbridge.commands
 
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
@@ -35,12 +34,13 @@ import timber.log.Timber
  * **Why key-value model:**
  * Simple, familiar pattern (like localStorage API). Web developers understand
  * key-value storage immediately, reducing learning curve.
- *
- * **Implementation placeholder:**
- * Awaits integration with actual EncryptedSharedPreferences or Keystore-based
- * storage solution. Currently logs for development/debugging.
  */
 class SaveSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
+
+    private val secureStorage by lazy {
+        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        SecureStorage(requireNotNull(context))
+    }
 
     override val action = "saveSecureData"
 
@@ -56,23 +56,7 @@ class SaveSecureDataCommand(private val contextProvider: () -> Context?) : Bridg
         }
 
         try {
-            val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
-
-            // Create or retrieve a strong MasterKey backed by Android Keystore
-            val masterKey = MasterKey.Builder(requireNotNull(context))
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            // Encrypted SharedPreferences instance
-            val prefs = EncryptedSharedPreferences.create(
-                requireNotNull(context),
-                "secure_storage",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
-            prefs.edit().putString(key, value).apply()
+            secureStorage.save(key, value)
             Timber.i("[handle] saved key=$key, valueLength=${value.length}")
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {

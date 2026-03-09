@@ -1,8 +1,7 @@
 package net.kibotu.jsbridge.commands
 
 import android.content.Context
-import android.os.Build
-import android.view.WindowInsets
+import androidx.core.view.WindowInsetsCompat
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
@@ -30,28 +29,28 @@ class GetInsetsCommand(private val contextProvider: () -> Context?) : BridgeComm
                     "No active activity"
                 )
 
-            val window = activity.window
-            val decorView = window.decorView
+            val decorView = activity.window.decorView
             val rootInsets = decorView.rootWindowInsets
 
             val result = JSONObject()
 
-            if (rootInsets != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val statusBars = rootInsets.getInsets(WindowInsets.Type.statusBars())
-                val navBars = rootInsets.getInsets(WindowInsets.Type.navigationBars())
-                val ime = rootInsets.getInsets(WindowInsets.Type.ime())
+            if (rootInsets != null) {
+                val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(rootInsets, decorView)
+                val statusBars = insetsCompat.getInsets(WindowInsetsCompat.Type.statusBars())
+                val navBars = insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars())
+                val ime = insetsCompat.getInsets(WindowInsetsCompat.Type.ime())
 
                 result.put("statusBar", JSONObject().apply {
                     put("height", statusBars.top)
-                    put("visible", rootInsets.isVisible(WindowInsets.Type.statusBars()))
+                    put("visible", insetsCompat.isVisible(WindowInsetsCompat.Type.statusBars()))
                 })
                 result.put("systemNavigation", JSONObject().apply {
                     put("height", navBars.bottom)
-                    put("visible", rootInsets.isVisible(WindowInsets.Type.navigationBars()))
+                    put("visible", insetsCompat.isVisible(WindowInsetsCompat.Type.navigationBars()))
                 })
                 result.put("keyboard", JSONObject().apply {
                     put("height", ime.bottom)
-                    put("visible", rootInsets.isVisible(WindowInsets.Type.ime()))
+                    put("visible", insetsCompat.isVisible(WindowInsetsCompat.Type.ime()))
                 })
                 result.put("safeArea", JSONObject().apply {
                     put("top", statusBars.top)
@@ -60,17 +59,12 @@ class GetInsetsCommand(private val contextProvider: () -> Context?) : BridgeComm
                     put("left", navBars.left)
                 })
             } else {
-                @Suppress("DEPRECATION")
-                val insets = rootInsets
-                val statusBarHeight = insets?.systemWindowInsetTop ?: 0
-                val navBarHeight = insets?.systemWindowInsetBottom ?: 0
-
                 result.put("statusBar", JSONObject().apply {
-                    put("height", statusBarHeight)
+                    put("height", 0)
                     put("visible", true)
                 })
                 result.put("systemNavigation", JSONObject().apply {
-                    put("height", navBarHeight)
+                    put("height", 0)
                     put("visible", true)
                 })
                 result.put("keyboard", JSONObject().apply {
@@ -78,9 +72,9 @@ class GetInsetsCommand(private val contextProvider: () -> Context?) : BridgeComm
                     put("visible", false)
                 })
                 result.put("safeArea", JSONObject().apply {
-                    put("top", statusBarHeight)
+                    put("top", 0)
                     put("right", 0)
-                    put("bottom", navBarHeight)
+                    put("bottom", 0)
                     put("left", 0)
                 })
             }

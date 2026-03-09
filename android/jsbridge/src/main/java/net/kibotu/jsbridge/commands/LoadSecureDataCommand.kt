@@ -1,9 +1,8 @@
 package net.kibotu.jsbridge.commands
 
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import net.kibotu.jsbridge.BridgeContextProvider
+import net.kibotu.jsbridge.SecureStorage
 import net.kibotu.jsbridge.commands.utils.BridgeParsingUtils
 import net.kibotu.jsbridge.commands.utils.BridgeResponseUtils
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +34,11 @@ import timber.log.Timber
  */
 class LoadSecureDataCommand(private val contextProvider: () -> Context?) : BridgeCommand {
 
+    private val secureStorage by lazy {
+        val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
+        SecureStorage(requireNotNull(context))
+    }
+
     override val action = "loadSecureData"
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.IO) {
@@ -48,21 +52,7 @@ class LoadSecureDataCommand(private val contextProvider: () -> Context?) : Bridg
         }
 
         try {
-            val context = BridgeContextProvider.findActivity(contextProvider()) ?: contextProvider()
-
-            val masterKey = MasterKey.Builder(requireNotNull(context))
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            val prefs = EncryptedSharedPreferences.create(
-                requireNotNull(context),
-                "secure_storage",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
-            val value = prefs.getString(key, null)
+            val value = secureStorage.load(key)
             Timber.i("[handle] loaded key=$key, valueLength=${value?.length ?: 0}")
             JSONObject().apply {
                 put("key", key)

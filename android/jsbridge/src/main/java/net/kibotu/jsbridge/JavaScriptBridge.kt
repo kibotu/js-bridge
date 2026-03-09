@@ -105,7 +105,7 @@ class JavaScriptBridge(
             var id: String? = null
             try {
                 val messageObj = JSONObject(message)
-                id = messageObj.optString("id", null)
+                id = messageObj.opt("id") as? String
                 val data = messageObj.optJSONObject("data")
 
                 if (data == null) {
@@ -119,7 +119,7 @@ class JavaScriptBridge(
                     return@launch
                 }
 
-                val action = data.optString("action", null)
+                val action = data.opt("action") as? String
                 if (action.isNullOrEmpty()) {
                     sendErrorToWeb(id, BridgeError.InvalidMessage)
                     return@launch

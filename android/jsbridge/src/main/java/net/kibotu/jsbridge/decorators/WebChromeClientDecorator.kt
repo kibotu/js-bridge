@@ -123,12 +123,12 @@ open class WebChromeClientDecorator(
         delegate?.getVisitedHistory(callback) ?: super.getVisitedHistory(callback)
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onExceededDatabaseQuota(
         url: String?, databaseIdentifier: String?, quota: Long,
         estimatedDatabaseSize: Long, totalQuota: Long, quotaUpdater: WebStorage.QuotaUpdater?
     ) {
-        @Suppress("DEPRECATION")
         delegate?.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater)
             ?: super.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater)
     }
