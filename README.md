@@ -2,7 +2,7 @@
 
 [![Android CI](https://github.com/kibotu/jsbridge/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/android.yml)
 [![iOS CI](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml/badge.svg)](https://github.com/kibotu/jsbridge/actions/workflows/ios.yml) [![Maven Central Version](https://img.shields.io/maven-central/v/net.kibotu/jsbridge)](https://central.sonatype.com/artifact/net.kibotu/jsbridge)
- [![](https://jitpack.io/v/kibotu/jsbridge.svg)](https://jitpack.io/#kibotu/jsbridge)
+ [![](https://jitpack.io/v/kibotu/jsbridge.svg)](https://jitpack.io/#kibotu/jsbridge) [![Swift Package Manager](https://img.shields.io/github/v/tag/kibotu/jsbridge?label=SPM&color=orange)](https://github.com/kibotu/jsbridge/tags)
 
 
 A unified, promise-based JavaScript bridge for bidirectional communication between web content and native mobile apps. `window.jsbridge` works identically on Android and iOS. Life's too short for platform `if` statements.
