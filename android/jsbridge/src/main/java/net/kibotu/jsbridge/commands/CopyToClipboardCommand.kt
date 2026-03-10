@@ -38,7 +38,7 @@ class CopyToClipboardCommand : BridgeCommand, BridgeAware {
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.Main) {
         val text = BridgeParsingUtils.parseString(content, "text")
-        if (text.isEmpty()) {
+        if (text.isNullOrEmpty()) {
             return@withContext BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'text' parameter"

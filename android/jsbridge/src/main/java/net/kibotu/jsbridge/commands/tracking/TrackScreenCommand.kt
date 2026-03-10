@@ -20,7 +20,7 @@ class TrackScreenCommand : BridgeCommand {
 
     override suspend fun handle(content: Any?): Any? {
         val screenName = BridgeParsingUtils.parseString(content, "screenName")
-        if (screenName.isEmpty()) {
+        if (screenName.isNullOrEmpty()) {
             return BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'screenName' parameter"

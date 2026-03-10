@@ -41,7 +41,7 @@ class ShowToastCommand : BridgeCommand, BridgeAware {
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.Main) {
         val message = BridgeParsingUtils.parseString(content, "message")
-        if (message.isEmpty()) {
+        if (message.isNullOrEmpty()) {
             return@withContext BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'message' parameter"

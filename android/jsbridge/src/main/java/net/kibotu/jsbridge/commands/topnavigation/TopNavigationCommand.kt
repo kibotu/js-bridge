@@ -39,7 +39,7 @@ class TopNavigationCommand : BridgeCommand, BridgeAware {
             TopNavigationService.applyConfig(
                 TopNavigationConfig(
                     isVisible = isVisible == true,
-                    title = title.takeIf { it.isNotEmpty() },
+                    title = title.takeIf { it?.isNotEmpty() == true },
                     showUpArrow = showUpArrow == true,
                     showDivider = showDivider == true,
                     showLogo = showLogo == true,

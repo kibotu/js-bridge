@@ -46,7 +46,7 @@ class LoadSecureDataCommand : BridgeCommand, BridgeAware {
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.IO) {
         val key = BridgeParsingUtils.parseString(content, "key")
 
-        if (key.isEmpty()) {
+        if (key.isNullOrEmpty()) {
             return@withContext BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'key' parameter"

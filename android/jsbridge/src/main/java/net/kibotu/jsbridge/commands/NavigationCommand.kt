@@ -57,7 +57,7 @@ class NavigationCommand : BridgeCommand, BridgeAware {
                     activity.finish()
                 }
 
-                url.isNotEmpty() -> {
+                url?.isNotEmpty() == true -> {
                     // URL navigation -- implement via your app's navigation service
                 }
 

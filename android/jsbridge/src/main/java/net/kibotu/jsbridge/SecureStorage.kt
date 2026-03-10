@@ -20,7 +20,7 @@ class SecureStorage(context: Context) {
 
     private val delegate: SecureStorageBackend = createBackend(context)
 
-    fun save(key: String, value: String) = delegate.save(key, value)
+    fun save(key: String, value: String?) = delegate.save(key, value)
     fun load(key: String): String? = delegate.load(key)
     fun remove(key: String) = delegate.remove(key)
     fun contains(key: String): Boolean = delegate.contains(key)
@@ -61,7 +61,7 @@ class SecureStorage(context: Context) {
 }
 
 internal interface SecureStorageBackend {
-    fun save(key: String, value: String)
+    fun save(key: String, value: String?)
     fun load(key: String): String?
     fun remove(key: String)
     fun contains(key: String): Boolean
@@ -89,9 +89,9 @@ internal class TinkSecureStorageBackend(context: Context) : SecureStorageBackend
         prefs = context.getSharedPreferences(SecureStorage.PREF_DATA_FILE, Context.MODE_PRIVATE)
     }
 
-    override fun save(key: String, value: String) {
+    override fun save(key: String, value: String?) {
         val encrypted =
-            aead.encrypt(value.toByteArray(Charsets.UTF_8), key.toByteArray(Charsets.UTF_8))
+            aead.encrypt(value?.toByteArray(Charsets.UTF_8), key.toByteArray(Charsets.UTF_8))
         prefs.edit {
             putString(
                 key,
@@ -139,7 +139,7 @@ internal class LegacySecureStorageBackend(context: Context) : SecureStorageBacke
         )
     }
 
-    override fun save(key: String, value: String) {
+    override fun save(key: String, value: String?) {
         prefs.edit { putString(key, value) }
     }
 

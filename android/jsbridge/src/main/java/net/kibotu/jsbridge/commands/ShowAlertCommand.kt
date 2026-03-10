@@ -45,7 +45,7 @@ class ShowAlertCommand : BridgeCommand, BridgeAware {
         val message = BridgeParsingUtils.parseString(content, "message")
         val buttons = BridgeParsingUtils.parseStringArray(content, "buttons")
 
-        if (message.isEmpty()) {
+        if (message.isNullOrEmpty()) {
             return@withContext BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'message' parameter"
@@ -62,7 +62,7 @@ class ShowAlertCommand : BridgeCommand, BridgeAware {
             }
 
             AlertDialog.Builder(activity)
-                .setTitle(title.ifEmpty { "Alert" })
+                .setTitle(title?.ifEmpty { "Alert" })
                 .setMessage(message)
                 .apply {
                     if (buttons.isNotEmpty()) {

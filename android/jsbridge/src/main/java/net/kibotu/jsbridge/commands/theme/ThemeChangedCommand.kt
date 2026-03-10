@@ -21,11 +21,11 @@ class ThemeChangedCommand : BridgeCommand {
 
     override suspend fun handle(content: Any?): JSONObject = withContext(Dispatchers.Main) {
         try {
-            val theme = BridgeParsingUtils.parseString(content, "theme").ifEmpty { "dark" }
+            val theme = BridgeParsingUtils.parseString(content, "theme")?.ifEmpty { "dark" }
 
             Timber.i("[ThemeChangedCommand] theme=$theme")
 
-            ThemeService.setTheme(theme)
+            theme?.let { ThemeService.setTheme(it) }
 
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {

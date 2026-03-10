@@ -1,8 +1,10 @@
 package net.kibotu.jsbridge.commands
 
+import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.annotation.RequiresPermission
 import net.kibotu.jsbridge.BridgeContextProvider
 import net.kibotu.jsbridge.JavaScriptBridge
 import org.json.JSONObject
@@ -28,6 +30,7 @@ class NetworkStatusCommand : BridgeCommand, BridgeAware {
 
     override val action = "networkState"
 
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     override suspend fun handle(content: Any?): JSONObject {
         val context = BridgeContextProvider.findActivity(bridge?.context) ?: bridge?.context
         val connectivityManager =

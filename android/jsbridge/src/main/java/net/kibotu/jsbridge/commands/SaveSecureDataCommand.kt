@@ -50,7 +50,7 @@ class SaveSecureDataCommand : BridgeCommand, BridgeAware {
         val key = BridgeParsingUtils.parseString(content, "key")
         val value = BridgeParsingUtils.parseString(content, "value")
 
-        if (key.isEmpty()) {
+        if (key.isNullOrEmpty()) {
             return@withContext BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'key' parameter"
@@ -59,7 +59,7 @@ class SaveSecureDataCommand : BridgeCommand, BridgeAware {
 
         try {
             secureStorage.save(key, value)
-            Timber.i("[handle] saved key=$key, valueLength=${value.length}")
+            Timber.i("[handle] saved key=$key, valueLength=${value?.length}")
             BridgeResponseUtils.createSuccessResponse()
         } catch (e: Exception) {
             Timber.e(e)

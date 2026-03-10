@@ -12,11 +12,11 @@ import org.json.JSONObject
  */
 object BridgeParsingUtils {
 
-    fun parseString(content: Any?, key: String): String {
+    fun parseString(content: Any?, key: String): String? {
         return when (content) {
             is JSONObject -> content.optString(key, "")
             is String -> if (key == "text" || key == "message" || key == "url") content else ""
-            else -> ""
+            else -> null
         }
     }
 
@@ -52,7 +52,7 @@ object BridgeParsingUtils {
 
     fun parseDuration(content: Any?): Int {
         val duration = parseString(content, "duration")
-        return when (duration.lowercase()) {
+        return when (duration?.lowercase()) {
             "long" -> Toast.LENGTH_LONG
             else -> Toast.LENGTH_SHORT
         }

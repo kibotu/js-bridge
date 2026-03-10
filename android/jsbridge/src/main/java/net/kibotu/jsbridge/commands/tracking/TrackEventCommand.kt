@@ -21,7 +21,7 @@ class TrackEventCommand : BridgeCommand {
 
     override suspend fun handle(content: Any?): Any? {
         val event = BridgeParsingUtils.parseString(content, "event")
-        if (event.isEmpty()) {
+        if (event.isNullOrEmpty()) {
             return BridgeResponseUtils.createErrorResponse(
                 "INVALID_PARAMETER",
                 "Missing 'event' parameter"
