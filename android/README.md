@@ -275,7 +275,8 @@ dependencies {
 | `deviceInfo` | Platform, OS version, model, app version |
 | `networkState` | Connectivity status and type |
 | `openSettings` | Opens the app's Settings page |
-| `getInsets` | Current safe area insets and bar heights |
+| `insets` | Current safe area insets and bar heights (dp values) |
+| `systemBarsInfo` | Individual bar dimensions and visibility (dp values) |
 | `showToast` | Native toast message |
 | `showAlert` | Native alert dialog |
 | `topNavigation` | Show/hide/configure the top navigation bar |

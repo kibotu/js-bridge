@@ -213,11 +213,11 @@ All of these work on both platforms with zero native setup (just use `DefaultCom
 
 | Category | Actions | What it does |
 |----------|---------|--------------|
-| **Navigation** | `topNavigation`, `bottomNavigation`, `systemBars` | Show/hide the top toolbar, bottom tab bar, status bar, system navigation. Web controls native chrome. |
+| **Navigation** | `topNavigation`, `bottomNavigation`, `systemBars`, `systemBarsInfo` | Show/hide the top toolbar, bottom tab bar, status bar, system navigation. Query individual bar dimensions and visibility. Web controls native chrome. |
 | **UI** | `showToast`, `showAlert`, `haptic`, `copyToClipboard` | Native toast, alert dialogs, haptic feedback, clipboard. Things web can't do well on its own. |
 | **Device** | `deviceInfo`, `networkState`, `openSettings`, `requestPermissions` | Platform, OS version, model, connectivity, native settings screen, runtime permissions. |
 | **Storage** | `saveSecureData`, `loadSecureData`, `removeSecureData` | Encrypted storage backed by Keychain (iOS) and EncryptedSharedPreferences (Android). |
-| **Layout** | `getInsets` + CSS custom properties | Safe area insets, keyboard height, bar heights. Pushed automatically as CSS variables. |
+| **Layout** | `insets`, `systemBarsInfo` + CSS custom properties | Safe area insets (dp/pt), keyboard height, individual bar dimensions and visibility. Pushed automatically as CSS variables. |
 | **Lifecycle** | `lifecycle` events via `on()` | Know when your screen is actually visible (not buried under modals or other tabs). |
 | **Analytics** | `trackEvent`, `trackScreen` | Fire-and-forget. Don't even `await` these. |
 | **Navigation** | `navigation` | Load URLs in-app or externally, go back. |
@@ -254,8 +254,16 @@ const net = await jsbridge.call('networkState');
 
 await jsbridge.call('openSettings');
 
-const insets = await jsbridge.call('getInsets');
-// → { statusBar: { height, visible }, systemNavigation: {...}, keyboard: {...}, safeArea: { top, right, bottom, left } }
+const insets = await jsbridge.call('insets');
+// → { statusBar: { height, visible }, systemNavigation: {...}, keyboard: {...},
+//     safeArea: { top, right, bottom, left } }
+// All values in dp (Android) / pt (iOS)
+// safeArea.top = statusBar + topNavigation (when visible)
+// safeArea.bottom = systemNavigation + bottomNavigation (when visible)
+
+const bars = await jsbridge.call('systemBarsInfo');
+// → { statusBar: { height, isVisible }, topNavigation: { height, isVisible },
+//     bottomNavigation: { height, isVisible }, systemNavigation: { height, isVisible } }
 ```
 
 #### UI
@@ -276,7 +284,7 @@ await jsbridge.call('topNavigation', { isVisible: true, title: 'Home', showUpArr
 // Bottom navigation bar
 await jsbridge.call('bottomNavigation', { isVisible: false });
 
-// System bars (Android only -- iOS ignores this gracefully)
+// System bars (iOS handles status bar; system navigation is Android-only)
 await jsbridge.call('systemBars', { showStatusBar: false, showSystemNavigation: false });
 
 // URL navigation
@@ -368,8 +376,13 @@ await jsbridge.call('systemBars', { showStatusBar: false, showSystemNavigation: 
 For JavaScript layout calculations (e.g. canvas sizing), query on demand:
 
 ```js
-const insets = await jsbridge.call('getInsets');
-// → { safeArea: { top: 44, bottom: 34, ... }, statusBar: { height: 44 }, ... }
+const insets = await jsbridge.call('insets');
+// → { safeArea: { top: 86.13, bottom: 14.93, ... }, statusBar: { height: 30.13, visible: true }, ... }
+// All values in dp (Android) / pt (iOS)
+
+// For individual bar dimensions and visibility:
+const bars = await jsbridge.call('systemBarsInfo');
+// → { statusBar: { height: 30.13, isVisible: true }, topNavigation: { height: 56.0, isVisible: true }, ... }
 ```
 
 ### Focus Awareness
@@ -528,12 +541,13 @@ declare global { interface Window { jsbridge: Bridge } }
 | `deviceInfo` | ✅ | ✅ |
 | `networkState` | ✅ | ✅ |
 | `openSettings` | ✅ | ✅ |
-| `getInsets` | ✅ | ✅ |
+| `insets` | ✅ | ✅ |
+| `systemBarsInfo` | ✅ | ✅ |
 | `showToast` | ✅ | ✅ |
 | `showAlert` | ✅ | ✅ |
 | `topNavigation` | ✅ | ✅ |
 | `bottomNavigation` | ✅ | ✅ |
-| `systemBars` | -- | ✅ |
+| `systemBars` | ✅ | ✅ |
 | `haptic` | ✅ | ✅ |
 | `navigation` | ✅ | ✅ |
 | `copyToClipboard` | ✅ | ✅ |
@@ -902,7 +916,7 @@ Unified bridge release. Breaking changes:
 - `on()` now supports multiple handlers (use `off()` to remove)
 - Unified callback names across platforms
 
-New: `bridge.js` single source of truth, `platform` property, `off()`, `setMockHandler()`, `getStats()`, `getInsets` action, native-driven safe area CSS injection, desktop mock mode.
+New: `bridge.js` single source of truth, `platform` property, `off()`, `setMockHandler()`, `getStats()`, `insets` action, native-driven safe area CSS injection, desktop mock mode.
 
 ### 1.0.0 (2026-01-31)
 

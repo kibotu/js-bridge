@@ -237,12 +237,13 @@ struct WebViewContainer: UIViewControllerRepresentable {
 | `deviceInfo` | Platform, OS version, model, app version |
 | `networkState` | Connectivity status and type |
 | `openSettings` | Opens the app's Settings page |
-| `getInsets` | Current safe area insets |
+| `insets` | Current safe area insets (pt values) |
+| `systemBarsInfo` | Individual bar dimensions and visibility (pt values) |
 | `showToast` | Native toast message |
 | `showAlert` | Native alert dialog |
 | `topNavigation` | Show/hide/configure the top navigation bar |
 | `bottomNavigation` | Show/hide the bottom tab bar |
-| `systemBars` | Status bar and system navigation (Android-specific, no-op on iOS) |
+| `systemBars` | Show/hide status bar (system navigation is Android-only) |
 | `haptic` | Haptic feedback |
 | `navigation` | Load URLs or go back |
 | `copyToClipboard` | Copy text to clipboard |
