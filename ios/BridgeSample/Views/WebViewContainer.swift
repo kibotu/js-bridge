@@ -66,6 +66,13 @@ class WebViewController: UIViewController, WKNavigationDelegate, WindowFocusObse
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.navigationDelegate = self
+        
+        #if DEBUG
+        // Enable inspection in debug builds
+         if #available(iOS 16.4, *) {
+             webView?.isInspectable = true
+         }
+        #endif
 
         view.addSubview(webView)
 
