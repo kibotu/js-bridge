@@ -82,6 +82,9 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
 
         setupMessageHandler()
         injectBridgeScript()
+        #if DEBUG
+        injectConsoleLogInterceptor()
+        #endif
     }
 
     deinit {
@@ -313,5 +316,92 @@ public final class JavaScriptBridge: NSObject, WKScriptMessageHandler {
 
     public func notifyLifecycleEvent(_ event: String) {
         sendToWeb(action: "lifecycle", content: ["event": event])
+    }
+    
+    // MARK: Logging Web Console
+    
+    private static let consoleHandlerName = "nativeConsoleLog"
+    
+    // swiftlint:disable function_body_length
+    func injectConsoleLogInterceptor() {
+        guard let webView = webView else { return }
+        
+        let js = """
+        (function() {
+            if (window.__nativeConsoleHooked) return;
+            window.__nativeConsoleHooked = true;
+            
+            function getCallerLocation() {
+                try {
+                    var stack = new Error().stack || '';
+                    var lines = stack.split('\\n');
+                    // JSC format: "functionName@file:line:col" or "@file:line:col"
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        // Skip internal/hooked frames
+                        if (!line || line.indexOf('getCallerLocation') !== -1 || line.indexOf('__nativeConsoleHooked') !== -1) continue;
+                        // JSC: "someFunc@http://localhost:8080/app.js:42:10"
+                        // JSC anonymous: "@http://localhost:8080/app.js:42:10"
+                        var match = line.match(/@(.+):(\\d+):\\d+$/);
+                        if (match) {
+                            var file = match[1].split('/').pop();
+                            return file + ':' + match[2];
+                        }
+                    }
+                } catch(e) {}
+                return '';
+            }
+            
+            var levels = ['log', 'debug', 'info', 'warn', 'error'];
+            levels.forEach(function(level) {
+                var original = console[level];
+                console[level] = function() {
+                    var args = Array.prototype.slice.call(arguments).map(function(a) {
+                        if (a instanceof Error) {
+                            return a.message + (a.stack ? '\\n' + a.stack : '');
+                        }
+                        try { return (typeof a === 'object') ? JSON.stringify(a, null, 2) : String(a); }
+                        catch(e) { return String(a); }
+                    });
+                    
+                    window.webkit.messageHandlers.\(Self.consoleHandlerName).postMessage({
+                        level: level,
+                        message: args.join(' '),
+                        location: getCallerLocation()
+                    });
+                    original.apply(console, arguments);
+                };
+            });
+        })();
+        """
+        
+        let script = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        webView.configuration.userContentController.addUserScript(script)
+        webView.configuration.userContentController.add(self, name: Self.consoleHandlerName)
+    }
+    
+    func console(_ message: WKScriptMessage) {
+        guard message.name == Self.consoleHandlerName,
+              let body = message.body as? [String: Any],
+              let level = body["level"] as? String,
+              let text = body["message"] as? String else { return }
+        
+        let location = (body["location"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+        let prefix = location.map { "[\($0)] " } ?? ""
+        let output = prefix + text
+        
+        Orchard.loggers.compactMap({ $0 as? ConsoleLogger }).first?.showInvocation = false
+
+        Orchard.tag("Console")
+        
+        switch level {
+        case "error": Orchard.e(output)
+        case "warn":  Orchard.w(output)
+        case "info":  Orchard.i(output)
+        case "debug": Orchard.d(output)
+        default:      Orchard.v(output)
+        }
+        
+        Orchard.loggers.compactMap({ $0 as? ConsoleLogger }).first?.showInvocation = true
     }
 }
